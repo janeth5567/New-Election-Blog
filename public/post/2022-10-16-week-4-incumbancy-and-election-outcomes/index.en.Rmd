@@ -44,7 +44,7 @@ dist_polls_2018.2022 <- read.csv("~/Desktop/dist_polls_2018-2022.csv")
 
 ```
 
-```{r setup bc r is mad at me}
+```{r setup bc r is mad at me, show_col_types = FALSE, include= FALSE}
 CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/CPI_monthly.csv")
 economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
 unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
@@ -76,7 +76,7 @@ economy_model_data <-economy_model_data %>%
   inner_join(unemployment_q2, by = "year")
 ```
 
-```{r theme janet}
+```{r theme janet, include = FALSE}
 theme_janet <- function(base_size = 13, base_family = "") {
   theme_grey(base_size = base_size, base_family = base_family) %+replace%
     theme(
@@ -268,7 +268,7 @@ data_mod <- data.frame(Predicted = predict(incumbency_model, new_data = incumben
 ```
 
 
-```{r}
+```{r, echo= FALSE}
 Model <- ggplot(data_mod,                                  
        aes(x = Predicted,
            y = Observed))  +
