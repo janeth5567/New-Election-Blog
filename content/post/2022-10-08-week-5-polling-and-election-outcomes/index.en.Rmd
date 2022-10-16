@@ -3,7 +3,7 @@ title: 'Week 5: Ad Spend and Election Outcomes'
 author: Janet Hernandez
 date: '2022-10-08'
 ---
-# Polling and Election Outcomes # 
+# Advertising and Election Outcomes # 
 
 
 ```{r setup, include = FALSE}
