@@ -1,17 +1,13 @@
 ---
 title: 'Week 2: Elections and the Economy'
 author: Janet Hernandez
-date: '2022-10-16'
-slug: []
+date: '2022-09-17'
 categories:
-  - R
   - Economy
+  - R
 tags:
-  - regression
   - plot
-type: ''
-subtitle: ''
-image: ''
+  - regression
 ---
 
 
