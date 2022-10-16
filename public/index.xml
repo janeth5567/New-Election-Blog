@@ -14,7 +14,8 @@
       <pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate>
       <author>youremail@domain.com (Janet Hernandez)</author>
       <guid>https://username.github.io/post/2022-10-08-week-5-polling-and-election-outcomes/</guid>
-      <description></description>
+      <description>My Existing Model New local model that includes district level data on polling, incumbency, and local employment data is much more accurate. R-squared of 0.73 which is the highest so far. This is only when I use for DemMajorVotePct. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly.
+Below is a plot of the actual outcomes from the 2018 election from which im pulling my predictive modeling data from.</description>
     </item>
     
     <item>
