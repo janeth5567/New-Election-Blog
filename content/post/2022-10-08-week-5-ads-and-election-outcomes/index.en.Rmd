@@ -130,7 +130,7 @@ national_model_data <-economy_model_data %>%
 
 # My Existing Model # 
 
-My current model from Week 4 included incumbency, economic factors, and basic polling. 
+My current model from Week 4 included incumbency, economic factors, and basic polling. Currently, the R squared for this model is at .73, a fair amount. 
 
 ```{r local model data, echo=FALSE}
 
@@ -197,7 +197,7 @@ summ(w4_local_model)
 
 ```
 
-New local model that includes district level data on polling, incumbency, and local employment data is much more accurate. R-squared of 0.73 which is the highest so far. This is only when I use for DemMajorVotePct. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly. 
+My new local model that includes district level data on polling, incumbency, and local employment data is much more accurate than before. However, the R-squared of 0.73 which is the highest so far only when I use DemMajorVotePct as my outcome variable. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly. 
 
 
 ```{r adding ad spend into model, include= FALSE}
