@@ -29,15 +29,18 @@ library(lubridate)
 ```
 
 ```{r, include=FALSE}
-CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Section data 2/CPI_monthly.csv")
-economy <- read.csv("~/Desktop/Gov1347 Data/Section data 2/GDP_quarterly.csv")
-unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Section data 2/unemployment_state_monthly.csv")
-popvote_df <- read_csv("~/Desktop/Gov1347 Data/Section data 2/house_popvote_seats.csv")
-unemployment_national_quarterly_final <- read_csv("~/Desktop/Gov1347 Data/Section data 2/unemployment_national_quarterly_final.csv")
-RDI_quarterly <- read_csv("~/Desktop/Gov1347 Data/Section data 2/RDI_quarterly.csv")
-RDI_monthly <- read_csv("~/Desktop/Gov1347 Data/Section data 2/RDI_monthly.csv")
+CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/CPI_monthly.csv")
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
+popvote_df <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+unemployment_national_quarterly_final <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+RDI_quarterly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+RDI_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_monthly.csv")
+
 voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
 house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
 economy_q2 <- economy %>% 
   filter(quarter_yr == 2) 
 
