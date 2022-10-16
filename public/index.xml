@@ -14,8 +14,7 @@
       <pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate>
       <author>youremail@domain.com (Janet Hernandez)</author>
       <guid>https://username.github.io/post/2022-10-08-week-5-ads-and-election-outcomes/</guid>
-      <description>Advertising and Election Outcomes My Existing Model New local model that includes district level data on polling, incumbency, and local employment data is much more accurate. R-squared of 0.73 which is the highest so far. This is only when I use for DemMajorVotePct. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly.
-Below is a plot of the actual outcomes from the 2018 election from which im pulling my predictive modeling data from.</description>
+      <description>This week, I look at how campaign ad spending has an effect on my existing models. I will specifically look at FEC election data and see if I can find a strong indicator of prediction for my model this week using ad data.</description>
     </item>
     
     <item>
