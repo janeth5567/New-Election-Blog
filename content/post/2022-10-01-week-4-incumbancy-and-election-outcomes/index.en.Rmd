@@ -1,19 +1,15 @@
 ---
 title: 'Week 4: Incumbancy and Election Outcomes'
 author: Janet Hernandez
-date: '2022-10-16'
-slug: []
+date: '2022-10-01'
 categories:
+  - Economy
   - incumbancy
   - local
   - national
-  - Economy
 tags:
   - plot
   - regression
-type: ''
-subtitle: ''
-image: ''
 ---
 
 ```{r setup, include=FALSE, message=FALSE}
