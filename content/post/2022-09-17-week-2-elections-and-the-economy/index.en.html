@@ -1,0 +1,128 @@
+---
+title: 'Week 2: Elections and the Economy'
+author: Janet Hernandez
+date: '2022-09-17'
+categories:
+  - Economy
+  - R
+tags:
+  - plot
+  - regression
+---
+
+
+
+<p><strong>This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.</strong></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in <a href="https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_askewsholts_vlebooks_9781400888740&amp;context=PC&amp;vid=HVD2&amp;search_scope=everything&amp;tab=everything&amp;lang=en_US">Democracy For Realists</a> argue that voters use the economy as a way to measure the performance of an incumbent party / president.</p>
+<p>In this blog, I will compare two different models which to attempt to predict the performance of the incumbent party in Congress for the upcoming election using previous election data.</p>
+<p>The data I will be using is the GDP (which is usually seen as an indicator of the overall strength of the economy), RDI or Real Disposable Income (important for individuals and shows a better picture of how much cash people have to spend), and finally, unemployment. I will be focusing on <strong>Q2</strong> of each year since it is the closest to election time that we will have full data for right now since Q3 ends in late October. In addition we don’t have data for Q3 for 2022 yet.</p>
+<p><em>I will construct two different types of models, one that I consider to be very national based and another I consider to be more local based, using predictors such as state unemployment and RDI.</em></p>
+</div>
+<div id="national-model-modeling-using-only-gdp-and-popular-vote" class="section level1">
+<h1>National Model: Modeling Using only GDP and Popular Vote</h1>
+<p>My first model is a rather simple one, to start off I will just assess whether or not there is a particularly strong correlation between how the overall economy is doing, measured by GDP, and how much of the popular vote share the incumbent party receives.</p>
+<p><br></p>
+<pre><code>##   (Intercept) GDP_growth_qt 
+##  194.80095422   -0.00124522</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt, data = economy_model_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -54.749 -19.210  -2.976  29.880  52.479 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   194.800954   5.691955  34.224   &lt;2e-16 ***
+## GDP_growth_qt  -0.001245   0.016594  -0.075    0.941    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 31.63 on 29 degrees of freedom
+## Multiple R-squared:  0.0001941,  Adjusted R-squared:  -0.03428 
+## F-statistic: 0.005631 on 1 and 29 DF,  p-value: 0.9407</code></pre>
+<p><br></p>
+<p>As we can see, just a linear regression with GDP growth is not a great indicator of any variance we see in our data set. Our adjusted R^2 value is only -0.03, meaning only about 3% of the variance in our data set is explained by our model. We also have a remarkably low slope of -0.000312 which equates to an extremely small negative change of 0.03% in popular vote share of an incumbent for every change of 1 in our GDP growth.</p>
+<p><br></p>
+</div>
+<div id="national-model-including-gdp-rdi-and-national-unemployment" class="section level1">
+<h1>National Model including GDP, RDI, and National Unemployment</h1>
+<p>My next model will hopefully give us a more comprehensive picture of what the relationship between the economy and an incumbent party’s share of the popular vote given any election year. I will then also use this model and our state model to make a prediction for the 2022 Midterm Election.</p>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt + DSPIC_change_qt + UNRATE, 
+##     data = economy_model_data)
+## 
+## Coefficients:
+##     (Intercept)    GDP_growth_qt  DSPIC_change_qt           UNRATE  
+##       178.74466          0.09485          0.04792         -0.35372</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt + DSPIC_change_qt + UNRATE, 
+##     data = economy_model_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -51.217 -19.721  -1.811  23.121  60.097 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     178.74466   21.53429   8.300 6.57e-09 ***
+## GDP_growth_qt     0.09485    0.03853   2.462   0.0205 *  
+## DSPIC_change_qt   0.04792    0.01785   2.685   0.0123 *  
+## UNRATE           -0.35372    3.46800  -0.102   0.9195    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 28.94 on 27 degrees of freedom
+## Multiple R-squared:  0.2208, Adjusted R-squared:  0.1342 
+## F-statistic:  2.55 on 3 and 27 DF,  p-value: 0.07664</code></pre>
+<div id="unemployment-and-elections" class="section level2">
+<h2>Unemployment and Elections</h2>
+<p>In this more complete model, we can see that our model is firstly pretty mediocre. The standard errors are relatively high and our p values are higher than 0.05 (not statistically significant) as well as a pretty mediocre R^2 value indicates (R^2 explains how much variance is explained by our model) that there may not be a super intense correlation between economic factors and the incumbents popular vote percent in elections.</p>
+<p>One factor to note though is that unemployment has a relatively high coefficient when compared to the rest of our predictors. This makes sense to me, as <a href="https://www-jstor-org.ezp-prod1.hul.harvard.edu/stable/10.1017/s0022381614000437#metadata_info_tab_contents">research</a> has shown that most voters think of “the economy” as how long domestic unemployment is rather than GDP.</p>
+</div>
+<div id="predicted-v.-actual-incumbent-popular-vote-percent-based-on-this-model" class="section level2">
+<h2>Predicted v. Actual Incumbent Popular Vote Percent Based on This Model</h2>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><br>
+Even with our new predictors, not a great fit to our actual data!</p>
+</div>
+</div>
+<div id="local-economy-based-model" class="section level1">
+<h1>Local Economy Based Model</h1>
+<p>In this model, I will be looking at how local unemployment in specific affect the Republican vote margin. I am choosing to look at specifically how republicans fare due to data constraints as well as knowing that Republican voters rank economy as a higher priority than democratic voters. It will be interesting to see how a “strong economy” can either greatly help or hurt republican candidates in local elections.</p>
+<p>To simplify my analysis, I will be focusing on the month before an election for the state unemployment data. My reasoning here is that research has shown that most voters think very short term. Most Americans will judge their voting decision in the immediate past, therefore, I believe it is reasonable to use the month of October before an election in November as a baseline.</p>
+<pre><code>## 
+## Call:
+## lm(formula = RepVotesMajorPercent ~ Unemployed_prct, data = local_data)
+## 
+## Coefficients:
+##     (Intercept)  Unemployed_prct  
+##         47.3014          -0.4299</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = RepVotesMajorPercent ~ Unemployed_prct, data = local_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -46.442 -15.176   2.036  17.138  65.638 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     47.30137    0.02504  1889.3   &lt;2e-16 ***
+## Unemployed_prct -0.42987    0.00379  -113.4   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 24.37 on 8949317 degrees of freedom
+## Multiple R-squared:  0.001436,   Adjusted R-squared:  0.001435 
+## F-statistic: 1.287e+04 on 1 and 8949317 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="what-does-this-mean-for-the-upcoming-midterm-election" class="section level1">
+<h1>What Does This Mean for the Upcoming Midterm Election?</h1>
+<p>Basing our predictions just on the economy will be a long shot if we are concerned about accurate and viable predictions. The economy seems to be a weak predictor of election outcomes both on a national and local level. This is likely due to wide margins and lots of outliers due to the recent pandemic as well as extreme economic downturns such as 2008. Right now, I don’t think I am changing my predictions from last week because I haven’t found that any of my models are good enough to change my predictions or sway my opinion on key political understandings.</p>
+</div>
