@@ -130,10 +130,11 @@ national_model_data <-economy_model_data %>%
 
 # My Existing Model # 
 
-```{r local model data, include= FALSE}
+My current model from Week 4 included incumbency, economic factors, and basic polling. 
+
+```{r local model data, echo=FALSE}
 
 #Building model off of 2018 data for simple purposes. 
-
 
 #Include District Level Economy Data
   # Clean and update economy state level 
@@ -193,6 +194,7 @@ local_model_data <- local_model_data %>%
 w4_local_model <- lm(DemVotesMajorPercent ~ avg + Unemployed_prct + winner_candidate_inc, data = local_model_data)
 
 summ(w4_local_model)
+
 ```
 
 New local model that includes district level data on polling, incumbency, and local employment data is much more accurate. R-squared of 0.73 which is the highest so far. This is only when I use for DemMajorVotePct. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly. 
