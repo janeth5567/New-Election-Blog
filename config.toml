@@ -1,6 +1,6 @@
 baseurl = "https://username.github.io"
 DefaultContentLanguage = "en"
-title = "Election Analytics Blog"
+title = "Gov1347 Election Analytics Blog"
 theme = "beautifulhugo"
 pygmentsStyle = "trac"
 pygmentsUseClasses = true
@@ -12,7 +12,7 @@ pygmentsCodefencesGuessSyntax = true
 #googleAnalytics = "XXX"
 
 [Params]
- homeTitle = "2022 Midterm Blog for Gov1347" # Set a different text for the header on the home page
+ homeTitle = "Midterm Election Blog" # Set a different text for the header on the home page
   subtitle = "Build a beautiful and simple website in minutes"
   mainSections = ["post","posts"]
   logo = "img/avatar-icon.png" # Expecting square dimensions
