@@ -13,7 +13,7 @@ pygmentsCodefencesGuessSyntax = true
 
 [Params]
  homeTitle = "Midterm Election Blog" # Set a different text for the header on the home page
-  subtitle = "Build a beautiful and simple website in minutes"
+  subtitle = "Tracking election predictions as part of Harvard's Gov1347 class with Ryan Enos"
   mainSections = ["post","posts"]
   logo = "img/avatar-icon.png" # Expecting square dimensions
   favicon = "img/favicon.ico"
