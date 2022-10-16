@@ -1,0 +1,236 @@
+---
+title: 'Week 2: Elections and the Economy'
+author: Janet Hernandez
+date: '2022-10-16'
+slug: []
+categories:
+  - R
+  - Economy
+tags:
+  - regression
+  - plot
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+```{r library, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(plotly)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+```
+
+ **This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.** 
+
+```{r data read in, include=FALSE}
+CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/CPI_monthly.csv")
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
+popvote_df <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+unemployment_national_quarterly_final <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+RDI_quarterly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+RDI_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_monthly.csv")
+
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+# I already loaded in R_2016 which is popvote by state and some others from lab and last section 
+```
+
+```{r shapefile, include= FALSE}
+states_map <- usmap::us_map()
+unique(states_map$abbr) 
+```
+
+# Introduction #
+
+There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in [Democracy For Realists](https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_askewsholts_vlebooks_9781400888740&context=PC&vid=HVD2&search_scope=everything&tab=everything&lang=en_US) argue that voters use the economy as a way to measure the performance of an incumbent party / president. 
+
+In this blog, I will compare two different models which to attempt to predict the performance of the incumbent party in Congress for the upcoming election using previous election data.
+
+The data I will be using is the GDP (which is usually seen as an indicator of the overall strength of the economy), RDI or Real Disposable Income (important for individuals and shows a better picture of how much cash people have to spend), and finally, unemployment. I will be focusing on **Q2** of each year since it is the closest to election time that we will have full data for right now since Q3 ends in late October. In addition we don't have data for Q3 for 2022 yet. 
+
+*I will construct two different types of models, one that I consider to be very national based and another I consider to be more local based, using predictors such as state unemployment and RDI.*
+
+# National Model: Modeling Using only GDP and Popular Vote #
+
+My first model is a rather simple one, to start off I will just assess whether or not there is a particularly strong correlation between how the overall economy is doing, measured by GDP, and how much of the popular vote share the incumbent party receives. 
+```{r setup, echo = FALSE}
+
+#Plot Incumbent Popular Vote versus Q3 GDP Growth 
+
+
+economy_q2 <- economy %>% 
+  filter(quarter_yr == 2) 
+
+RDI_q2 <- RDI_quarterly %>%
+  filter(quarter_yr == 2)
+
+unemployment_q2 <- unemployment_national_quarterly_final %>%
+  filter(quarter_yr == 2)
+
+economy_model_data <- popvote_df %>% 
+  inner_join(economy_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(RDI_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(unemployment_q2, by = "year")
+
+#Now I have economy model data which has both GDP and RDI along with the % of vote share by the incumbent party 
+# Y variable -- Popular vote share for incumbent party 
+# Predictor -- Overall GDP for Q3, RDI for Q3, for my national model and then unemployment in local area for combined with RDI for my local model. 
+
+
+```
+<br> 
+
+```{r GDP modeling, echo=FALSE}
+
+GDP_model <- lm(R_seats ~ GDP_growth_qt, data = economy_model_data)
+coef(GDP_model)
+summary(GDP_model)
+```
+<br> 
+
+
+
+As we can see, just a linear regression with GDP growth is not a great indicator of any variance we see in our data set. Our adjusted R^2 value is only -0.03, meaning only about 3% of the variance in our data set is explained by our model. We also have a remarkably low slope of -0.000312 which equates to an extremely small negative change of 0.03% in popular vote share of an incumbent for every change of 1 in our GDP growth.
+
+
+<br> 
+```{r, include=FALSE}
+theme_janet <- function(base_size = 13, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      
+      # Base elements which are not used directly but inherited by others
+      line =              element_line(colour = '#DADADA', size = 0.75, 
+                                       linetype = 1, lineend = "butt"),
+      rect =              element_rect(fill = "#F0F0F0", colour = "#F0F0F0", 
+                                       size = 0.5, linetype = 1),
+      text =              element_text(family = base_family, face = "plain",
+                                       colour = "#656565", size = base_size,
+                                       hjust = 0.5, vjust = 0.5, angle = 0, 
+                                       lineheight = 0.9),
+      
+      # Modified inheritance structure of text element
+      plot.title =        element_text(size = rel(1.5), family = '' , 
+                                       face = 'bold', hjust = -0.05, 
+                                       vjust = 1.5, colour = '#3B3B3B'),
+      axis.title.x =      element_text(),
+      axis.title.y =      element_text(),
+      axis.text =         element_text(),
+      
+      # Modified inheritance structure of line element
+      axis.ticks =        element_line(),
+      panel.grid.major =  element_line(),
+      panel.grid.minor =  element_blank(),
+      
+      # Modified inheritance structure of rect element
+      plot.background =   element_rect(),
+      panel.background =  element_rect(),
+      legend.key =        element_rect(colour = '#DADADA'),
+      
+      # Modifiying legend.position
+      legend.position = 'none',
+      
+      complete = TRUE
+    )
+}
+```
+
+# National Model including GDP, RDI, and National Unemployment ##
+
+My next model will hopefully give us a more comprehensive picture of what the relationship between the economy and an incumbent party's share of the popular vote given any election year. I will then also use this model and our state model to make a prediction for the 2022 Midterm Election. 
+
+```{r, echo  = FALSE}
+fullmodel = lm(R_seats ~  GDP_growth_qt + DSPIC_change_qt + UNRATE , data = economy_model_data)
+
+fullmodel
+
+summary(fullmodel)
+
+National_prediction <- data.frame()
+
+
+
+```
+
+
+## Unemployment and Elections
+
+In this more complete model, we can see that our model is firstly pretty mediocre. The standard errors are relatively high and our p values are higher than 0.05 (not statistically significant) as well as a pretty mediocre R^2 value indicates (R^2 explains how much variance is explained by our model) that there may not be a super intense correlation between economic factors and the incumbents popular vote percent in elections. 
+
+One factor to note though is that unemployment has a relatively high coefficient when compared to the rest of our predictors. This makes sense to me, as [research](https://www-jstor-org.ezp-prod1.hul.harvard.edu/stable/10.1017/s0022381614000437#metadata_info_tab_contents) has shown that most voters think of "the economy" as how long domestic unemployment is rather than GDP.
+
+## Predicted  v. Actual Incumbent Popular Vote Percent Based on This Model 
+
+
+```{r, echo=FALSE}
+data_mod <- data.frame(Predicted = predict(fullmodel, new_data = National_prediction),  # Create data for ggplot2 
+                       Observed = economy_model_data$R_seats)
+
+ggplot(data_mod,                                  
+       aes(x = Predicted,
+           y = Observed)) +
+  geom_point() +
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "red",
+              size = 2) + theme_classic()
+```
+
+
+<br>
+Even with our new predictors, not a great fit to our actual data!
+
+ 
+
+# Local Economy Based Model
+
+In this model, I will be looking at how local unemployment in specific affect the Republican vote margin. I am choosing to look at specifically how republicans fare due to data constraints as well as knowing that Republican voters rank economy as a higher priority than democratic voters. It will be interesting to see how a "strong economy" can either greatly help or hurt republican candidates in local elections.
+
+To simplify my analysis, I will be focusing on the month before an election for the state unemployment data. My reasoning here is that research has shown that most voters think very short term. Most Americans will judge their voting decision in the immediate past, therefore, I believe it is reasonable to use the month of October before an election in November as a baseline.
+
+
+```{r local, echo=FALSE}
+#Get local data by state for unemployment in October for each state
+    #unemployment_local  Already is filtered for October
+    # Get R_vote_margin for District Races 
+    # combine the two datasets into one to compare and then graph
+
+unemployment_local <- unemployment_state_monthly %>% 
+  filter(Month == 10)
+
+popvote_state <-house_party_vote_share_by_district_1948_2020
+
+unemployment_local <- unemployment_state_monthly %>%
+  rename(State = 'State and area')
+
+local_data <- merge(unemployment_local, popvote_state, by = "State")
+
+local_model <- lm(RepVotesMajorPercent ~ Unemployed_prct, data = local_data)
+
+local_model
+
+summary(local_model)
+
+
+
+```
+
+
+# What Does This Mean for the Upcoming Midterm Election? 
+
+Basing our predictions just on the economy will be a long shot if we are concerned about accurate and viable predictions. The economy seems to be a weak predictor of election outcomes both on a national and local level. This is likely due to wide margins and lots of outliers due to the recent pandemic as well as extreme economic downturns such as 2008. Right now, I don't think I am changing my predictions from last week because I haven't found that any of my models are good enough to change my predictions or sway my opinion on key political understandings. 
+
+
