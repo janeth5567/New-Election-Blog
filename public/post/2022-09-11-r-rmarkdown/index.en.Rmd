@@ -1,0 +1,195 @@
+---
+title: 'Week 1: Elections '
+author: Janet Hernandez
+date: '2022-09-11'
+categories:
+  - R
+tags:
+  - plot
+  - R Markdown
+  - regression
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+*This is my first weekly election blog posting for an ongoing assignment for the class Election Analytics at Harvard College with Professor Ryan Enos. Enjoy! :)*
+
+I will be using the visualization customization extension for this blog post and will use the resulting data to make a prediction about the upcoming 2022 midterm election. 
+
+1. create a map of Republican/Democrat voteshare margin by state in a year of your choice,
+2. create a map of Republican/Democrat voteshare margin by state and congressional district in
+2014,
+3. label each state (e.g. AZ) in your map and
+4. create a custom ggplot2 theme for your blog.
+
+```{r include=FALSE}
+#1. create a map of Republican/Democrat voteshare margin by state in a year of your choice,
+
+#Using a lot of the code from our lab section modified below: 
+
+## make map of vote share by state and CD
+# start with 114th congress - 2014 election
+# required packages
+require(tidyverse)
+require(ggplot2)
+require(sf)
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+# load 114th congress
+cd114 <- get_congress_map(114)
+
+```
+
+**For my analysis, I'm picking the year 2016 since it is the most recent midterm year from the 114th Congress.** 
+
+Also, I am using a custom theme that replicates 538 theme that I found on GitHub. The source is linked at: https://github.com/alex23lemm/theme_fivethirtyeight/blob/master/theme_fivethirtyeight.R
+
+```{r include = FALSE}
+library(grid)
+
+theme_janet <- function(base_size = 13, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      
+      # Base elements which are not used directly but inherited by others
+      line =              element_line(colour = '#DADADA', size = 0.75, 
+                                       linetype = 1, lineend = "butt"),
+      rect =              element_rect(fill = "#F0F0F0", colour = "#F0F0F0", 
+                                       size = 0.5, linetype = 1),
+      text =              element_text(family = base_family, face = "plain",
+                                       colour = "#656565", size = base_size,
+                                       hjust = 0.5, vjust = 0.5, angle = 0, 
+                                       lineheight = 0.9),
+      
+      # Modified inheritance structure of text element
+      plot.title =        element_text(size = rel(1.5), family = '' , 
+                                       face = 'bold', hjust = -0.05, 
+                                       vjust = 1.5, colour = '#3B3B3B'),
+      axis.title.x =      element_blank(),
+      axis.title.y =      element_blank(),
+      axis.text =         element_text(),
+      
+      # Modified inheritance structure of line element
+      axis.ticks =        element_line(),
+      panel.grid.major =  element_line(),
+      panel.grid.minor =  element_blank(),
+      
+      # Modified inheritance structure of rect element
+      plot.background =   element_rect(),
+      panel.background =  element_rect(),
+      legend.key =        element_rect(colour = '#DADADA'),
+      
+      # Modifiying legend.position
+      legend.position = 'none',
+      
+      complete = TRUE
+    )
+}
+```
+
+
+```{r include=FALSE}
+h <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+popvote_df <- h
+popvote_df %>%
+filter(year == 2018) %>%
+select(D_seats, D_majorvote_pct, winner_party)
+
+popvote_wide_df <- popvote_df %>%
+select(year, winner_party, winning_vote_margin) %>%
+spread(key = winner_party, value = winning_vote_margin)
+head(popvote_wide_df, 3)
+
+popvote_wide_df %>%
+gather(key = "winner_party", value = "winning_vote_margin",
+D, R) %>%
+filter(year %in% c(1948, 1952, 1956))
+
+popvote_wide_df <- popvote_wide_df %>%
+mutate(winner = case_when(D != "NA" ~ "Democrat",
+TRUE ~ "Republican"))
+
+# start with 114th congress - 2014 election
+# required packages
+require(tidyverse)
+require(ggplot2)
+require(sf)
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+# load 114th congress
+cd114 <- get_congress_map(114)
+
+h <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+# filter for relevant variables
+R_2016 <- h %>%
+filter(raceYear == 2016) %>%
+select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+# summarize party vote share by state
+group_by(State) %>%
+# mutate Rep vote margin by state %>%
+mutate(R_votemargin_st = (sum(RepVotes))/
+sum(RepVotes + DemVotes),
+D_votemargin_st = (sum(DemVotes))/
+
+sum(RepVotes + DemVotes)) %>%
+
+rename(state = State)
+
+
+# load usmap
+# install.packages('plot_usmap')
+library(usmap)
+states_map <- usmap::us_map()
+unique(states_map$abbr)
+
+```
+
+```{r, echo= FALSE}
+
+plot_usmap(data = R_2016, regions = "states", values = "R_votemargin_st", labels = TRUE) +
+scale_fill_gradient(low = "white", high = "red", name = "GOP two-party voteshare margin") + labs (title = "Republican Vote Share Margin in 2016") +
+theme_janet()
+
+
+plot_usmap(data = R_2016, regions = "states", values = "D_votemargin_st", labels = TRUE) + 
+scale_fill_gradient(low = "white", high = "blue", name = "Democratic two-party voteshare margin in 2016") + labs (title = "Democratic Vote Share Margin in 2016") +
+theme_janet()
+
+```
+
+Next, I will be analyzing the vote share margins by state and congressional district in 2014.
+
+
+```{r, include=TRUE, eval=FALSE}
+# plot with simplify
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+
+```
+
+**Initial Prediction **
+
+My initial prediction for the midterm election is that Republicans will once again regain control of the House of Representatives. Well known "swing states" will likely swing back from blue to red in this upcoming election. I believe that right now though, my opinion is quite uninformed as this is just speculation. I expect that as the weeks go on and I am able to match data to my assumptions that I may be swayed in opinion. Currently my week 1 estimate: 
+
+HOR: Republicans with a slight majority at 225 seats and Democrats with the remaining 210
+
+Senate: A slight advantage for the Democrats with 52 Democratic seats while the remaining 48 go to Republicans.
