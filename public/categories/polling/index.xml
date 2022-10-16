@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Polling on Beautiful Hugo</title>
+    <link>https://username.github.io/categories/polling/</link>
+    <description>Recent content in Polling on Beautiful Hugo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
+    <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
+    <lastBuildDate>Sun, 25 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/polling/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 3: Polling and Elections </title>
+      <link>https://username.github.io/post/2022-09-25-week-3-polling-and-elections/</link>
+      <pubDate>Sun, 25 Sep 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-09-25-week-3-polling-and-elections/</guid>
+      <description>Introduction This week, we focused on seeing how polling might affect and predict election outcomes. Gelman and King spoke about how polling is really only indicative of people’s preferences close to the election. Over the course of a campaign cycle, Gelman and King argue, responses to pollsters during the campaign are not generally informed or even, in a sense we describe, “rational.”
+For this reason, when building and assessing a model this week, I will try to weigh the polls heavier when they are closer to the election day.</description>
+    </item>
+    
+  </channel>
+</rss>

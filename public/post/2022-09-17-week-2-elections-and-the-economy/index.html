@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Week 2: Elections and the Economy - Beautiful Hugo</title>
+  <meta name="description" content="This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.
+Introduction There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in Democracy For Realists argue that voters use the economy as a way to measure the performance of an incumbent party / president.">
+  <meta name="author" content="Janet Hernandez"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Beautiful Hugo",
+    
+    "url": "https:\/\/username.github.io"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/username.github.io"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/username.github.io",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/username.github.io\/post\/2022-09-17-week-2-elections-and-the-economy\/",
+          "name": "Week 2 elections and the economy"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Janet Hernandez"
+  },
+  "headline": "Week 2: Elections and the Economy",
+  "description" : "This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.\nIntroduction There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in Democracy For Realists argue that voters use the economy as a way to measure the performance of an incumbent party \/ president.",
+  "inLanguage" : "en",
+  "wordCount":  1191 ,
+  "datePublished" : "2022-09-17T00:00:00",
+  "dateModified" : "2022-09-17T00:00:00",
+  "image" : "https:\/\/username.github.io\/img\/avatar-icon.png",
+  "keywords" : [ "plot, regression" ],
+  "mainEntityOfPage" : "https:\/\/username.github.io\/post\/2022-09-17-week-2-elections-and-the-economy\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/username.github.io",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/username.github.io\/img\/avatar-icon.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Week 2: Elections and the Economy" />
+<meta property="og:description" content="This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.
+Introduction There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in Democracy For Realists argue that voters use the economy as a way to measure the performance of an incumbent party / president.">
+<meta property="og:image" content="https://username.github.io/img/avatar-icon.png" />
+<meta property="og:url" content="https://username.github.io/post/2022-09-17-week-2-elections-and-the-economy/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Beautiful Hugo" />
+
+  <meta name="twitter:title" content="Week 2: Elections and the Economy" />
+  <meta name="twitter:description" content="This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc. …">
+  <meta name="twitter:image" content="https://username.github.io/img/avatar-icon.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@username" />
+  <meta name="twitter:creator" content="@username" />
+  <link href='https://username.github.io/img/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.102.3" />
+  <link rel="alternate" href="https://username.github.io/index.xml" type="application/rss+xml" title="Beautiful Hugo"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://username.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://username.github.io/css/highlight.min.css" /><link rel="stylesheet" href="https://username.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://username.github.io">Beautiful Hugo</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent">Samples</a>
+              <div class="navlinks-children">
+                
+                  <a href="/post/2017-03-07-bigimg-sample">Big Image Sample</a>
+                
+                  <a href="/post/2017-03-05-math-sample">Math Sample</a>
+                
+                  <a href="/post/2016-03-08-code-sample">Code Sample</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Beautiful Hugo" href="https://username.github.io">
+            <img class="avatar-img" src="https://username.github.io/img/avatar-icon.png" alt="Beautiful Hugo" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Week 2: Elections and the Economy</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on September 17, 2022
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-clock"></i>&nbsp;6&nbsp;minutes
+  
+  
+    &nbsp;|&nbsp;<i class="fas fa-book"></i>&nbsp;1191&nbsp;words
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Janet Hernandez
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+
+<p><strong>This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.</strong></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in <a href="https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_askewsholts_vlebooks_9781400888740&amp;context=PC&amp;vid=HVD2&amp;search_scope=everything&amp;tab=everything&amp;lang=en_US">Democracy For Realists</a> argue that voters use the economy as a way to measure the performance of an incumbent party / president.</p>
+<p>In this blog, I will compare two different models which to attempt to predict the performance of the incumbent party in Congress for the upcoming election using previous election data.</p>
+<p>The data I will be using is the GDP (which is usually seen as an indicator of the overall strength of the economy), RDI or Real Disposable Income (important for individuals and shows a better picture of how much cash people have to spend), and finally, unemployment. I will be focusing on <strong>Q2</strong> of each year since it is the closest to election time that we will have full data for right now since Q3 ends in late October. In addition we don’t have data for Q3 for 2022 yet.</p>
+<p><em>I will construct two different types of models, one that I consider to be very national based and another I consider to be more local based, using predictors such as state unemployment and RDI.</em></p>
+</div>
+<div id="national-model-modeling-using-only-gdp-and-popular-vote" class="section level1">
+<h1>National Model: Modeling Using only GDP and Popular Vote</h1>
+<p>My first model is a rather simple one, to start off I will just assess whether or not there is a particularly strong correlation between how the overall economy is doing, measured by GDP, and how much of the popular vote share the incumbent party receives.</p>
+<p><br></p>
+<pre><code>##   (Intercept) GDP_growth_qt 
+##  194.80095422   -0.00124522</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt, data = economy_model_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -54.749 -19.210  -2.976  29.880  52.479 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   194.800954   5.691955  34.224   &lt;2e-16 ***
+## GDP_growth_qt  -0.001245   0.016594  -0.075    0.941    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 31.63 on 29 degrees of freedom
+## Multiple R-squared:  0.0001941,  Adjusted R-squared:  -0.03428 
+## F-statistic: 0.005631 on 1 and 29 DF,  p-value: 0.9407</code></pre>
+<p><br></p>
+<p>As we can see, just a linear regression with GDP growth is not a great indicator of any variance we see in our data set. Our adjusted R^2 value is only -0.03, meaning only about 3% of the variance in our data set is explained by our model. We also have a remarkably low slope of -0.000312 which equates to an extremely small negative change of 0.03% in popular vote share of an incumbent for every change of 1 in our GDP growth.</p>
+<p><br></p>
+</div>
+<div id="national-model-including-gdp-rdi-and-national-unemployment" class="section level1">
+<h1>National Model including GDP, RDI, and National Unemployment</h1>
+<p>My next model will hopefully give us a more comprehensive picture of what the relationship between the economy and an incumbent party’s share of the popular vote given any election year. I will then also use this model and our state model to make a prediction for the 2022 Midterm Election.</p>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt + DSPIC_change_qt + UNRATE, 
+##     data = economy_model_data)
+## 
+## Coefficients:
+##     (Intercept)    GDP_growth_qt  DSPIC_change_qt           UNRATE  
+##       178.74466          0.09485          0.04792         -0.35372</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = R_seats ~ GDP_growth_qt + DSPIC_change_qt + UNRATE, 
+##     data = economy_model_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -51.217 -19.721  -1.811  23.121  60.097 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     178.74466   21.53429   8.300 6.57e-09 ***
+## GDP_growth_qt     0.09485    0.03853   2.462   0.0205 *  
+## DSPIC_change_qt   0.04792    0.01785   2.685   0.0123 *  
+## UNRATE           -0.35372    3.46800  -0.102   0.9195    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 28.94 on 27 degrees of freedom
+## Multiple R-squared:  0.2208, Adjusted R-squared:  0.1342 
+## F-statistic:  2.55 on 3 and 27 DF,  p-value: 0.07664</code></pre>
+<div id="unemployment-and-elections" class="section level2">
+<h2>Unemployment and Elections</h2>
+<p>In this more complete model, we can see that our model is firstly pretty mediocre. The standard errors are relatively high and our p values are higher than 0.05 (not statistically significant) as well as a pretty mediocre R^2 value indicates (R^2 explains how much variance is explained by our model) that there may not be a super intense correlation between economic factors and the incumbents popular vote percent in elections.</p>
+<p>One factor to note though is that unemployment has a relatively high coefficient when compared to the rest of our predictors. This makes sense to me, as <a href="https://www-jstor-org.ezp-prod1.hul.harvard.edu/stable/10.1017/s0022381614000437#metadata_info_tab_contents">research</a> has shown that most voters think of “the economy” as how long domestic unemployment is rather than GDP.</p>
+</div>
+<div id="predicted-v.-actual-incumbent-popular-vote-percent-based-on-this-model" class="section level2">
+<h2>Predicted v. Actual Incumbent Popular Vote Percent Based on This Model</h2>
+<p><img src="https://username.github.io/post/2022-09-17-week-2-elections-and-the-economy/index.en_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><br>
+Even with our new predictors, not a great fit to our actual data!</p>
+</div>
+</div>
+<div id="local-economy-based-model" class="section level1">
+<h1>Local Economy Based Model</h1>
+<p>In this model, I will be looking at how local unemployment in specific affect the Republican vote margin. I am choosing to look at specifically how republicans fare due to data constraints as well as knowing that Republican voters rank economy as a higher priority than democratic voters. It will be interesting to see how a “strong economy” can either greatly help or hurt republican candidates in local elections.</p>
+<p>To simplify my analysis, I will be focusing on the month before an election for the state unemployment data. My reasoning here is that research has shown that most voters think very short term. Most Americans will judge their voting decision in the immediate past, therefore, I believe it is reasonable to use the month of October before an election in November as a baseline.</p>
+<pre><code>## 
+## Call:
+## lm(formula = RepVotesMajorPercent ~ Unemployed_prct, data = local_data)
+## 
+## Coefficients:
+##     (Intercept)  Unemployed_prct  
+##         47.3014          -0.4299</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = RepVotesMajorPercent ~ Unemployed_prct, data = local_data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -46.442 -15.176   2.036  17.138  65.638 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     47.30137    0.02504  1889.3   &lt;2e-16 ***
+## Unemployed_prct -0.42987    0.00379  -113.4   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 24.37 on 8949317 degrees of freedom
+## Multiple R-squared:  0.001436,   Adjusted R-squared:  0.001435 
+## F-statistic: 1.287e+04 on 1 and 8949317 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="what-does-this-mean-for-the-upcoming-midterm-election" class="section level1">
+<h1>What Does This Mean for the Upcoming Midterm Election?</h1>
+<p>Basing our predictions just on the economy will be a long shot if we are concerned about accurate and viable predictions. The economy seems to be a weak predictor of election outcomes both on a national and local level. This is likely due to wide margins and lots of outliers due to the recent pandemic as well as extreme economic downturns such as 2008. Right now, I don’t think I am changing my predictions from last week because I haven’t found that any of my models are good enough to change my predictions or sway my opinion on key political understandings.</p>
+</div>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://username.github.io/tags/plot/">plot</a>&nbsp;
+            
+              <a href="https://username.github.io/tags/regression/">regression</a>&nbsp;
+            
+          </div>
+        
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f&amp;text=Week%202%3a%20Elections%20and%20the%20Economy&amp;via=username" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f&amp;title=Week%202%3a%20Elections%20and%20the%20Economy" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f&amp;title=Week%202%3a%20Elections%20and%20the%20Economy" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f&amp;title=Week%202%3a%20Elections%20and%20the%20Economy" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2fusername.github.io%2fpost%2f2022-09-17-week-2-elections-and-the-economy%2f&amp;description=Week%202%3a%20Elections%20and%20the%20Economy" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+
+              </div>
+            </section>
+        
+
+        
+          
+            
+          
+
+          
+                  <h4 class="see-also">See also</h4>
+                  <ul>
+                
+                
+                    <li><a href="/post/2022-09-25-week-3-polling-and-elections/">Week 3: Polling and Elections </a></li>
+                
+                    <li><a href="/post/2022-09-11-r-rmarkdown/">Week 1: Elections </a></li>
+                
+              </ul>
+
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://username.github.io/post/2022-09-11-r-rmarkdown/" data-toggle="tooltip" data-placement="top" title="Week 1: Elections ">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://username.github.io/post/2022-09-25-week-3-polling-and-elections/" data-toggle="tooltip" data-placement="top" title="Week 3: Polling and Elections ">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="yourwebsite.com">Janet Hernandez</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2022
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://username.github.io">Beautiful Hugo</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.102.3</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://username.github.io/js/main.js"></script>
+<script src="https://username.github.io/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://username.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

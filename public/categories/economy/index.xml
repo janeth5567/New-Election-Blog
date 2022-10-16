@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Economy on Beautiful Hugo</title>
+    <link>https://username.github.io/categories/economy/</link>
+    <description>Recent content in Economy on Beautiful Hugo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
+    <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
+    <lastBuildDate>Sat, 17 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/economy/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 2: Elections and the Economy</title>
+      <link>https://username.github.io/post/2022-09-17-week-2-elections-and-the-economy/</link>
+      <pubDate>Sat, 17 Sep 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-09-17-week-2-elections-and-the-economy/</guid>
+      <description>This weeks blog post will focus on using the economy as a variable to predictive modeling for the upcoming election using past data such as the unemployment rate, GDP for each quarter, RDI, etc.
+Introduction There has been extensive research showing that prospective voters substantially consider the state of the economy when making electoral decisions. Christopher H. Achen’s and Larry M. Bartels in Democracy For Realists argue that voters use the economy as a way to measure the performance of an incumbent party / president.</description>
+    </item>
+    
+  </channel>
+</rss>

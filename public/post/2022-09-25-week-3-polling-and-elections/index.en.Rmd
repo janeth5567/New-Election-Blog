@@ -1,0 +1,274 @@
+---
+title: 'Week 3: Polling and Elections '
+author: Janet Hernandez
+date: '2022-09-25'
+slug: []
+categories:
+  - R
+  - Polling
+tags:
+  - plot
+  - regression
+type: ''
+subtitle: 'This weeks blog post will focus on incorporating polling data to add into my existing predictive model that already includes economy variables to test to see how our predictions improve.'
+image: ''
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+library(plotly)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+library(ggplot2)
+library(ggrepel)
+library(lubridate)
+```
+
+```{r, include=FALSE}
+CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/CPI_monthly.csv")
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
+popvote_df <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+unemployment_national_quarterly_final <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+RDI_quarterly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+RDI_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_monthly.csv")
+
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+economy_q2 <- economy %>% 
+  filter(quarter_yr == 2) 
+
+RDI_q2 <- RDI_quarterly %>%
+  filter(quarter_yr == 2)
+
+unemployment_q2 <- unemployment_national_quarterly_final %>%
+  filter(quarter_yr == 2)
+
+economy_model_data <- popvote_df %>% 
+  inner_join(economy_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(RDI_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(unemployment_q2, by = "year")
+
+library(grid)
+
+theme_janet <- function(base_size = 13, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      
+      # Base elements which are not used directly but inherited by others
+      line =              element_line(colour = '#DADADA', size = 0.75, 
+                                       linetype = 1, lineend = "butt"),
+      rect =              element_rect(fill = "#F0F0F0", colour = "#F0F0F0", 
+                                       size = 0.5, linetype = 1),
+      text =              element_text(family = base_family, face = "plain",
+                                       colour = "#656565", size = base_size,
+                                       hjust = 0.5, vjust = 0.5, angle = 0, 
+                                       lineheight = 0.9),
+      
+      # Modified inheritance structure of text element
+      plot.title =        element_text(size = rel(1.5), family = '' , 
+                                       face = 'bold', hjust = -0.05, 
+                                       vjust = 1.5, colour = '#3B3B3B'),
+      axis.title.x =      element_text(),
+      axis.title.y =      element_text(),
+      axis.text =         element_text(),
+      
+      # Modified inheritance structure of line element
+      axis.ticks =        element_line(),
+      panel.grid.major =  element_line(),
+      panel.grid.minor =  element_blank(),
+      
+      # Modified inheritance structure of rect element
+      plot.background =   element_rect(),
+      panel.background =  element_rect(),
+      legend.key =        element_rect(colour = '#DADADA'),
+      
+      # Modifiying legend.position
+      legend.position = 'none',
+      
+      complete = TRUE
+    )
+}
+```
+# Introduction # 
+
+This week, we focused on seeing how polling might affect and predict election outcomes. [Gelman and King](https://www-jstor-org.ezp-prod1.hul.harvard.edu/stable/194212?sid=primo#metadata_info_tab_contents) spoke about how polling is really only indicative of people's preferences close to the election. Over the course of a campaign cycle, Gelman and King argue, responses to pollsters during the campaign are not generally informed or even, in a sense we describe, "rational." 
+
+For this reason, when building and assessing a model this week, I will try to weigh the polls heavier when they are closer to the election day. 
+
+# My Predictive Model So Far #
+
+To clarify from my previous posts where I didn't clearly have a section of my model and its predictions formally, I will do that now. I have decided to look at the Democratic seat number as the dependent variable for my model. My previous model combined economy data which I chose to be GDP, disposable income, and unemployment. With this model in my previous post, the R-squared is 0.22. This is relatively good, considering that 52% of the variance can be explained by these trends. However, the residual standard error is 29.18 on 27 degrees of freedom. Below is my a graph of my model that includes my observed vs predicted values. 
+
+
+```{r, echo=FALSE}
+
+PredictiveModel <- lm(D_seats ~  GDP_growth_qt + DSPIC_qt + UNRATE, data = economy_model_data)
+
+summ(PredictiveModel)
+
+
+National_prediction <- data.frame()
+
+data_mod <- data.frame(Predicted = predict(PredictiveModel, new_data = National_prediction),  # Create data for ggplot2 
+                       Observed = economy_model_data$D_seats)
+
+
+```
+
+```{r plot for prediction, echo= FALSE}
+ggplot(data_mod,                                  
+       aes(x = Predicted,
+           y = Observed))  +
+  geom_point() + 
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "red",
+              size = 2) +
+ geom_label_repel(label= economy_model_data$year, nudge_y = 6) + theme_janet() + ggtitle("Predictive Model 1:\nPredicted v. Observed Democrat Seats") 
+```
+
+```{r, actual prediction for 2022 election}
+
+predict(PredictiveModel, data.frame(GDP_growth_qt = 496.200, DSPIC_qt = 30299.2
+, UNRATE = 3.4))
+
+```
+
+My current model's prediction *without* polling information is that for the upcoming election, the Dems will win approximately **215** seats in Congress. One thing to note is that I used last quarter's inflation rate because our current DSPIC change was so extreme it resulted in an implausible number, so instead I used Q1 DSPIC change which is more in-line with typical rates as my figure for prediction in the model.
+
+# Introduction to Polling #
+
+This week, I will look at how polling data might affect our model. I will be doing extension #1, which is discussing differences between the 538 and Economist models and then building my own model again to predict the election with the added variable of polling. I will weigh this as (365 - days until the election).
+
+# Economist vs. Five Thirty Eight Prediction Models #
+
+In deciding which method I believe is most useful, I will evaluate their methods based on learning from our readings so far. Therefore, my indicators for a "good" predictive model will have to include accurate weighting of polling based on time left to the election, accountability for bias, and I think it's better to look at local ballots less and generic ballots more since there have been indications that local ballots are often concentrated / can lead to more outliers and errors in our models. 
+
+**Why the Economist Might Be Better**
+
+I think the economist election algorithm / model is closer to what I would use. I think it encompasses all of the fundamentals needed for a good model in addition to relying less on local data and polling for their modelling. This is unlike 538 which incorporates a lot of local polling data. 
+
+The Economist notes: 
+
+> For House elections, the single best indicator is polls—particularly the “generic-ballot” question, which asks Americans which party they want to control Congress. We look at other factors, too. If the party controlling the White House is doing better than expected in special elections, which are contests held between general elections to fill vacant seats, that bodes well for their odds in the midterms. But we also account for the midterm penalty: parties tend to lose votes in the election after they win the White House.
+
+Meanwhile, FiveThirtyEight says that their House models are much less polling based than other bigger races. They place less emphasis on polling and more on what their fundamentals are. I will say, I really like the detail in which 538 explained its methodology and how they correct for pollster bias as well as the timeline adjustment.
+
+
+
+```{r, include=FALSE}
+# Read in data
+pollster_ratings <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/pollster-ratings/2020/pollster-ratings.csv")
+poll_df <- read.csv("~/Downloads/GenericPolls1942_2020 (1).csv")
+
+```
+
+```{r clean and add weights, include=FALSE}
+poll_df <- poll_df %>%
+  # Filter out election year and discard polls conducted after election
+  filter(year %% 2 == 0 & year >= 1948) %>%
+  filter(days_until_election > 0, days_until_election < 365) %>%
+  select(pollster, year, emonth, eday, dem, rep, days_until_election) %>%
+  rename(dem_poll = dem, rep_poll = rep) %>%
+  # add weights
+  mutate(recency = 365 - days_until_election)
+
+# add a column that includes the actual seat count in poll? 
+
+
+#nvm found this gonna use this lol 
+
+results <- read.csv("~/Downloads/Gov1374Fall2022CongressionalSeatChanges - Sheet1.csv")
+
+#Combine our results data and then the poll data 
+new <- left_join(poll_df, results, by =c("year"= "ElectionDate"))
+
+
+```
+
+```{r weighted data, include = FALSE}
+polling_final <- poll_df %>%
+  # weighted average
+  group_by(year) %>%
+  summarize(dem_poll_weighted = weighted.mean(dem_poll, recency),
+            rep_poll_weighted = weighted.mean(rep_poll, recency)) %>%
+  rename(election_year = year)
+
+# combine new weighted polling data with my previous dataframe for predictions
+
+polling_new <- left_join(economy_model_data, polling_final, by = c("year"= "election_year"))
+
+recentpolling <- read.csv("~/Downloads/538_generic_poll_2022.csv")
+
+polling_2022 <- recentpolling %>%
+  select(enddate, pollster, grade, adjusted_dem, adjusted_rep)
+
+#Stripping years to make easier
+
+polling_2022$Year <- as.Date(polling_2022$enddate, format = "%m/%d/%y")
+polling_2022$Year <- format(as.Date(polling_2022$Year, format="%d/%m/%Y"),"%Y")
+
+
+
+
+
+```
+
+# New Model Results #
+```{r weighted regression with polling, echo=FALSE}
+newmodel <- lm(D_seats ~  GDP_growth_qt + DSPIC_qt + UNRATE + dem_poll_weighted, data = polling_new)
+summ(newmodel)
+
+prediction2 <- data.frame()
+
+pred2 <- data.frame(Predicted = predict(newmodel, new_data = prediction2),  # Create data for ggplot2 
+                       Observed = polling_new$D_seats)
+
+
+ggplot(pred2,                                  
+       aes(x = Predicted,
+           y = Observed))  +
+  geom_point() + 
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "red",
+              size = 2) +
+ geom_label_repel(label= polling_new$year, nudge_y = 6) + theme_janet() + ggtitle("Predictive Model 2:\nPredicted v. Observed Democrat Seats") 
+
+```
+My new model has a much better R^2 when I consider the weighted polling results. It also seems to be a much closer fit to the observed values with few exceptions like 2008. I think this is indicative that weighted polling results close to the election do help us improve our predictions about elections. 
+
+# Final Updated Prediction #
+With this model, it was a bit more difficult to calculate exact number because I used weighted dem polling as one of my variables. For the sake of simplicity, I am chosing to weigh the most recent poll from the a random pollster (in this case, Big Village's 9/9/22 poll result) and using their most recent adjusted dem pct of 45.02683 
+
+```{r new seat prediction}
+
+predict(newmodel, data.frame(GDP_growth_qt = 496.200, DSPIC_qt = 30299.2
+, UNRATE = 3.4, dem_poll_weighted = 45.02683 ))
+
+```
+
+With this data, my model now shows that Democrats can expect to win 218 seats. This is higher than my previous prediction so I can assume polling data I chose / my model favors Democrats with the current polling results. 
+
+
+
+## References
+Abramowitz, A. (2018). Will Democrats Catch a Wave? The Generic Ballot Model and the 2018 US House Elections. *PS: Political Science & Politics, 51*(S1), 4-6. doi:10.1017/S1049096518001567
+
+Bafumi, J., Erikson, R., & Wlezien, C. (2018). Forecasting the 2018 Midterm Election using National Polls and District Information. *PS: Political Science & Politics, 51*(S1), 7-11. doi:10.1017/S1049096518001579
+
+
+Gelman, A., & King, G. (1993). Why Are American Presidential Election Campaign Polls So Variable When Votes Are So Predictable? *British Journal of Political Science, 23*(4), 409–451. https://doi.org/10.1017/S0007123400006682
+
+
