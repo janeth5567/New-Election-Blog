@@ -5,18 +5,18 @@
     <link>https://username.github.io/tags/plot/</link>
     <description>Recent content in plot on Beautiful Hugo</description>
     <generator>Hugo -- gohugo.io</generator>
-    <managingEditor>youremail@domain.com (Some Person)</managingEditor>
-    <webMaster>youremail@domain.com (Some Person)</webMaster>
-    <lastBuildDate>Tue, 01 Dec 2020 21:13:14 -0500</lastBuildDate><atom:link href="https://username.github.io/tags/plot/index.xml" rel="self" type="application/rss+xml" />
+    <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
+    <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
+    <lastBuildDate>Sun, 11 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/tags/plot/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Hello R Markdown</title>
-      <link>https://username.github.io/post/2020-12-01-r-rmarkdown/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      <author>youremail@domain.com (Some Person)</author>
-      <guid>https://username.github.io/post/2020-12-01-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+      <title>Week 1: Elections </title>
+      <link>https://username.github.io/post/2022-09-11-r-rmarkdown/</link>
+      <pubDate>Sun, 11 Sep 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-09-11-r-rmarkdown/</guid>
+      <description>This is my first weekly election blog posting for an ongoing assignment for the class Election Analytics at Harvard College with Professor Ryan Enos. Enjoy! :)
+I will be using the visualization customization extension for this blog post and will use the resulting data to make a prediction about the upcoming 2022 midterm election.
+create a map of Republican/Democrat voteshare margin by state in a year of your choice, create a map of Republican/Democrat voteshare margin by state and congressional district in 2014, label each state (e.</description>
     </item>
     
   </channel>
