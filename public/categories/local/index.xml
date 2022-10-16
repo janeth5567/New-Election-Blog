@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
     <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
-    <lastBuildDate>Sat, 01 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/local/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 08 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/local/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Week 5: Ad Spend and Election Outcomes</title>
+      <link>https://username.github.io/post/2022-10-08-week-5-ads-and-election-outcomes/</link>
+      <pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-10-08-week-5-ads-and-election-outcomes/</guid>
+      <description>In this post, I will investigate the effects that ad spending can have on the outcome of elections on a district by district level. Using my current model, I will incorporate data found on the FEC’s website to approximate ad spend on a campaign district level. Using how much money was spent will be my variable, though I am aware that some scholarship says that number of ads rather than money spent is also a good indicator.</description>
+    </item>
+    
     <item>
       <title>Week 4: Incumbancy and Election Outcomes</title>
       <link>https://username.github.io/post/2022-10-01-week-4-incumbancy-and-election-outcomes/</link>

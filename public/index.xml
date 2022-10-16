@@ -14,7 +14,7 @@
       <pubDate>Sat, 08 Oct 2022 00:00:00 +0000</pubDate>
       <author>youremail@domain.com (Janet Hernandez)</author>
       <guid>https://username.github.io/post/2022-10-08-week-5-ads-and-election-outcomes/</guid>
-      <description>This week, I look at how campaign ad spending has an effect on my existing models. I will specifically look at FEC election data and see if I can find a strong indicator of prediction for my model this week using ad data.</description>
+      <description>In this post, I will investigate the effects that ad spending can have on the outcome of elections on a district by district level. Using my current model, I will incorporate data found on the FEC’s website to approximate ad spend on a campaign district level. Using how much money was spent will be my variable, though I am aware that some scholarship says that number of ads rather than money spent is also a good indicator.</description>
     </item>
     
     <item>

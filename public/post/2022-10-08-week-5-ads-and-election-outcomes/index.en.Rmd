@@ -2,15 +2,21 @@
 title: 'Week 5: Ad Spend and Election Outcomes'
 author: Janet Hernandez
 date: '2022-10-08'
-summary: This week, I look at how campaign ad spending has an effect on my existing
-  models. I will specifically look at FEC election data and see if I can find a strong
-  indicator of prediction for my model this week using ad data.
+categories:
+  - Economy
+  - incumbancy
+  - local
+  - national
+tags:
+  - plot
+  - regression
 ---
-# Advertising and Election Outcomes # 
 
 In this post, I will investigate the effects that ad spending can have on the outcome of elections on a district by district level. Using my current model, I will incorporate data found on the FEC's website to approximate ad spend on a campaign district level. Using how much money was spent will be my variable, though I am aware that some scholarship says that number of ads rather than money spent is also a good indicator. I will also run tests on that next week. I will also be using data from the 2018 midterm to build my predictive model. 
 
-##Current Scholarship##
+# Advertising and Election Outcomes # 
+
+## Current Scholarship ##
 
 Political scientists [Gregory A Huber and Kevin Arceneaux](https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_proquest_miscellaneous_59786011&context=PC&vid=HVD2&search_scope=everything&tab=everything&lang=en_US) have noted in their research that most districts tend to be non-competitive. They also argue that "Advertising does a little to inform, next to nothing to mobilize, and a great deal to persuade potential voters." A key takeaway from their work is how campaign advertising can do a great deal to persuade potential voters to candidates. Therefore, for undecided voters, it is highly likely that receiving more of a certain candidates ads more often than another will increase the likelihood of that voter to vote for the candidate which they saw more ads for. 
 
@@ -130,10 +136,11 @@ national_model_data <-economy_model_data %>%
 
 # My Existing Model # 
 
-```{r local model data, include= FALSE}
+My current model from Week 4 included incumbency, economic factors, and basic polling. Currently, the R squared for this model is at .73, a fair amount. I will plot the actual dem vote pct share for accurate comparison. 
+
+```{r local model data, echo=FALSE}
 
 #Building model off of 2018 data for simple purposes. 
-
 
 #Include District Level Economy Data
   # Clean and update economy state level 
@@ -193,9 +200,10 @@ local_model_data <- local_model_data %>%
 w4_local_model <- lm(DemVotesMajorPercent ~ avg + Unemployed_prct + winner_candidate_inc, data = local_model_data)
 
 summ(w4_local_model)
+
 ```
 
-New local model that includes district level data on polling, incumbency, and local employment data is much more accurate. R-squared of 0.73 which is the highest so far. This is only when I use for DemMajorVotePct. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly. 
+My new local model that includes district level data on polling, incumbency, and local employment data is much more accurate than before. However, the R-squared of 0.73 which is the highest so far only when I use DemMajorVotePct as my outcome variable. When I do DemSeats(which my previous models used) as my outcome variable, I get a lower R-squared of 0.50 exactly. 
 
 
 ```{r adding ad spend into model, include= FALSE}
@@ -266,6 +274,8 @@ theme_janet <- function(base_size = 13, base_family = "") {
 }
 ```
 
+## Actual Outcomes from 2018 ##
+
 Below is a plot of the actual outcomes from the 2018 election from which im pulling my predictive modeling data from.
 
 ```{r actual plot, echo= FALSE}
@@ -293,6 +303,10 @@ ggplotly(Actual2022_w5)
 
 ```
 
+
+## Updating the Model ##
+
+## Adding in Ad Spend as a Predictor ##
 Now I have to add the variable of ad spending on a local level. I've gone ahead and downloaded data from the FEC for 2018 election spending data. This isn't exactly the ad spend per campaign but I am using it as a proxy by making the assumption that the more money a particular race / candidate has overall translates to how much it is spending in ads.
 
 ```{r plots, echo= FALSE}
@@ -324,6 +338,13 @@ geom_sf(data= districts_simp,aes(fill= prediction), color = "grey60", size = 0.0
 ggplotly(Prediction2022_w5)
 ```
 
+## Analysis on Model ##
+
+As you can tell, it seems like my model is over predicting quite a lot **for** Democrats. Just from basic political knowledge, some of its predictions are almost comical. It for example predicts that the panhandle of Florida will go blue. I am quite interested in seeing what variables / inputs are really swaying the predictions so far for the democrats in my models case. 
+
+However, I can see there was the slightest effect on my R-Squared, bumping from 0.73 to 0.74 in my new Week 6 model.
+
+Next week, I will focus on seeing what inputs are swaying my model to over estimate democrats in districts and also investigate how the "Ground Game" of direct contact with voters may also predict elections. 
 
 ```{r predict v expected plot, echo= FALSE}
 summ(w5_local_model)
