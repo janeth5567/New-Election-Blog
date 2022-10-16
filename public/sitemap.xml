@@ -2,35 +2,47 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://username.github.io/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://username.github.io/categories/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/categories/economy/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/categories/incumbancy/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/categories/local/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/categories/national/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://username.github.io/tags/plot/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://username.github.io/categories/polling/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://username.github.io/post/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/tags/regression/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/tags/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/post/2022-10-16-week-4-incumbancy-and-election-outcomes/</loc>
+    <lastmod>2022-10-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://username.github.io/categories/polling/</loc>
     <lastmod>2022-09-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://username.github.io/categories/r/</loc>
     <lastmod>2022-09-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://username.github.io/tags/regression/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://username.github.io/tags/</loc>
-    <lastmod>2022-09-25T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://username.github.io/post/2022-09-25-week-3-polling-and-elections/</loc>
     <lastmod>2022-09-25T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://username.github.io/categories/economy/</loc>
-    <lastmod>2022-09-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://username.github.io/post/2022-09-17-week-2-elections-and-the-economy/</loc>
     <lastmod>2022-09-17T00:00:00+00:00</lastmod>

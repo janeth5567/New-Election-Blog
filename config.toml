@@ -81,11 +81,6 @@ pygmentsCodefencesGuessSyntax = true
     weight = 1
 
 [[menu.main]]
-    name = "About"
-    url = "page/about/"
-    weight = 3
-
-[[menu.main]]
     identifier = "samples"
     name = "Samples"
     weight = 2

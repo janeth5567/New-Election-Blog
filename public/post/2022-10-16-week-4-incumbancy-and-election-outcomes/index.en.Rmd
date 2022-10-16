@@ -1,0 +1,284 @@
+---
+title: 'Week 4: Incumbancy and Election Outcomes'
+author: Janet Hernandez
+date: '2022-10-16'
+slug: []
+categories:
+  - incumbancy
+  - local
+  - national
+  - Economy
+tags:
+  - plot
+  - regression
+type: ''
+subtitle: ''
+image: ''
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(collapse = TRUE)
+options(warn = -1)
+
+
+library(tidyverse)
+library(scales)
+library(plotly)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+library(ggplot2)
+library(ggrepel)
+library(lubridate)
+library(sf)
+library(usmap)
+
+states_map <- usmap::us_map()
+unique(states_map$abbr)
+
+incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+dist_polls_2018.2022 <- read.csv("~/Desktop/dist_polls_2018-2022.csv")
+
+
+```
+
+```{r setup bc r is mad at me}
+CPI_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/CPI_monthly.csv")
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+unemployment_state_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
+popvote_df <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+unemployment_national_quarterly_final <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+RDI_quarterly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+RDI_monthly <- read_csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_monthly.csv")
+
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+economy_q2 <- economy %>% 
+  filter(quarter_yr == 2) 
+
+RDI_q2 <- RDI_quarterly %>%
+  filter(quarter_yr == 2)
+
+unemployment_q2 <- unemployment_national_quarterly_final %>%
+  filter(quarter_yr == 2)
+
+economy_model_data <- popvote_df %>% 
+  inner_join(economy_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(RDI_q2, by = "year")
+
+economy_model_data <-economy_model_data %>% 
+  inner_join(unemployment_q2, by = "year")
+```
+
+```{r theme janet}
+theme_janet <- function(base_size = 13, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      
+      # Base elements which are not used directly but inherited by others
+      line =              element_line(colour = '#DADADA', size = 0.75, 
+                                       linetype = 1, lineend = "butt"),
+      rect =              element_rect(fill = "#F0F0F0", colour = "#F0F0F0", 
+                                       size = 0.5, linetype = 1),
+      text =              element_text(family = base_family, face = "plain",
+                                       colour = "#656565", size = base_size,
+                                       hjust = 0.5, vjust = 0.5, angle = 0, 
+                                       lineheight = 0.9),
+      
+      # Modified inheritance structure of text element
+      plot.title =        element_text(size = rel(1.5), family = '' , 
+                                       face = 'bold', hjust = -0.05, 
+                                       vjust = 1.5, colour = '#3B3B3B'),
+      axis.title.x =      element_text(),
+      axis.title.y =      element_text(),
+      axis.text =         element_text(),
+      
+      # Modified inheritance structure of line element
+      axis.ticks =        element_line(),
+      panel.grid.major =  element_line(),
+      panel.grid.minor =  element_blank(),
+      
+      # Modified inheritance structure of rect element
+      plot.background =   element_rect(),
+      panel.background =  element_rect(),
+      legend.key =        element_rect(colour = '#DADADA'),
+      
+      # Modifiying legend.position
+      legend.position = 'none',
+      
+      complete = TRUE
+    )
+}
+
+```
+
+
+# Expert Ratings #
+
+In my previous blogs, I have focused solely at national variables and conditions which may affect our election outcomes. Things like GDP, unemployment, polling, etc. are very helpful tools but we also have the option to look at elections from a much closer, district level approach. On the district level, many experts watch and weigh in on important races. Organizations such as Cook Political Report and Sabato's Crystal Ball take into account local conditions and determine ratings on an individual district level basis. These ratings are usually considerably accurate, with over 96% of House of Representative elections being accurately predicted between 1998 and 2016 (Silver, 2022). In this blog post, I will evaluate my existing model with the inclusion of incumbency and expert rating data. I will also create another model to visualize actual vote share to various expert predictions for a particular year, I will chose 2018. 
+
+
+```{r, echo= FALSE, warning=FALSE, message=FALSE, show_col_types = FALSE}
+require(sf)
+
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+
+# load 114th congress
+
+cd114 <- get_congress_map(114)
+
+#Load data just for year 2018 
+house_party_vote_share_by_district <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
+  filter(raceYear == 2018) %>%
+  select(State, raceYear, Area, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty )
+
+# Change from at large states w only one district to a code-able suffix
+house_party_vote_share_by_district$CD[grep(pattern = "-AL", x = house_party_vote_share_by_district$CD)] <- c("AK-01","DE-01","MT-01","ND-01","SD-01", "VT-01","WY-01")
+
+#Cleaned 2018 data from Ethan  
+ratings_share_2018 <-read.csv("~/Desktop/2018_ratings.csv")
+
+house_party_vote_share_by_district <- house_party_vote_share_by_district %>%  
+  inner_join(ratings_share_2018, by = "CD") %>%
+  rename(DISTRICT = district_num, STATENAME = State) %>%
+  mutate(DISTRICT = as.character(DISTRICT),
+         diff = avg_margin - RepVotesMajorPercent)
+
+cd114 <- cd114 %>% left_join(house_party_vote_share_by_district, by=c("DISTRICT", "STATENAME"))
+
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+
+
+
+#Plot 
+actualshare <- ggplot() + 
+geom_sf(data= districts_simp,aes(fill= DemVotesMajorPercent), color = "grey60", size = 0.05) + 
+ scale_fill_gradient2(low = "red", 
+                       mid = "white", 
+                       high = "blue", 
+                       midpoint = 50,
+                       name = "Democratic Vote Share") +
+  coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE) +  
+  theme_janet() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+  labs(fill = "Dem Two-Party Vote Share", title = "Actual 2018 Democratic Vote Share by District")
+
+ggplotly(actualshare)
+
+```
+
+# Visualizing Vote Share Outcomes with Expert Predictions #
+## District Level Predictions Map ##
+
+This is for blog extension 1. I will evaluate the accuracy of the expert predictions to the actual results by subtracting the difference between the average margin and the actual margin. 
+
+```{r, message=FALSE, show_col_types = FALSE}
+
+actualmargin <- ggplot() + 
+geom_sf(data= districts_simp,aes(fill= diff), color = "grey60", size = 0.05) + 
+ scale_fill_gradient2(low = "red", 
+                       mid = "white", 
+                       high = "blue", 
+                       midpoint = 0,
+                       name = "Difference in Margin") +
+  coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE) +  
+  theme_janet() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+  labs(fill = "Dem Two-Party Vote Share", title = "Differences in Expert Prediction v Actual Vote Margins in 2018")
+
+ggplotly(actualmargin)
+
+sum(districts_simp$diff, districts_simp$diff <= 0 )
+sum(districts_simp$diff, districts_simp$diff >= 0)
+
+
+```
+
+On average, according to this data, there are 200 more cases of positive differences. This indicates that in 2018 experts were more likely to **underestimate Democratic candidates in races.**
+
+
+## Updating My Existing Model ##
+
+One complication in aggregating district level data to my very national level model is trying to figure out what imputs make sense. As I thought about this, I realized there's no great way of doing it simply while also being accurate. For now, I am using whether or not its true that the incumbent party won or not. In the next week with more time and experience I hope to do this on an individual rather than national level. 
+
+Adding incumbency only improved my model's r-squared by 0.02, and there isn't much change in the fit. However, this will likely change on an individual district level and my choice of seats for my model makes it hard to find a good local metric. 
+
+```{r, echo=FALSE}
+# Update model so that its looking at incumbency data as a binary? then add the binary variable to my model. 
+
+
+#Create binary variable
+#fixing the id to match to join
+incumbentslist$district_id <- sub("(\\D)(\\d)", "\\1-\\2", incumbentslist$district_id)
+incumbentslist <- incumbentslist %>% 
+  filter(year == 2018)
+
+
+# add binary 0 or 1 variable for incumbent or not 
+
+incumbentslist$DemIncumbent <-ifelse(incumbentslist$DemStatus=="Incumbent", 1 , 0)
+
+economy_model_data$DemIncumbent <-ifelse(economy_model_data$H_incumbent_party=="D", 1 , 0)
+
+NEW_incumbent <- left_join(incumbentslist, districts_simp, by = c("district_id" = "CD"))
+
+
+
+
+#add incumbent variable to model 
+
+incumbency_model <- lm(D_seats ~ GDP_growth_qt + DSPIC_qt + UNRATE + DemIncumbent, data = economy_model_data)
+
+
+summ(incumbency_model)
+
+
+incumbency_prediction <- data.frame()
+
+data_mod <- data.frame(Predicted = predict(incumbency_model, new_data = incumbency_prediction),  
+                       Observed = economy_model_data$D_seats)
+
+```
+
+
+```{r}
+Model <- ggplot(data_mod,                                  
+       aes(x = Predicted,
+           y = Observed))  +
+  geom_point() + 
+  geom_abline(intercept = 0,
+              slope = 1,
+              color = "red",
+              size = 2) +
+ geom_label_repel(label= economy_model_data$year, nudge_y = 6) + theme_janet() + ggtitle("Predictive Model 1:\nPredicted v. Observed Democrat Seats") 
+
+
+ggplotly(Model)
+```
