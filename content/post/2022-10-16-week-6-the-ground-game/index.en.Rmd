@@ -1,0 +1,288 @@
+---
+title: 'Week 6: The Ground Game '
+author: Janet Hernandez
+date: '2022-10-16'
+slug: []
+categories:
+  - R
+  - Polling
+  - national
+  - local
+  - Economy
+  - incumbancy
+  - ads
+tags:
+  - plot
+  - regression
+type: ''
+subtitle: 'This week I will be looking at how the Ground Game or '
+image: ''
+---
+```{r, setup and lab code, echo = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(collapse = TRUE)
+options(warn = -1)
+
+
+# read in district-level voting data
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(scales)
+library(plotly)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+library(sqldf)
+
+#Vote and seat share data from prev environments
+
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+## ECONOMIC DATA ##
+
+# Data on GDP/quarter
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+
+# Data on RDI/quarter
+RDI_quarterly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv") 
+
+# Data on unemployment
+unemployment_national_quarterly_final <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv") 
+
+# Data on vote/seat share
+popvote_df <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+
+#state unemployment data
+unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
+
+
+#DATA FROM FEC.gov
+spending_bydistrict_2018 <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/ElectionBlog/2018_spending_by_district.csv")
+
+house_party_vote_share_by_district <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")%>% 
+  filter(raceYear == 2018) %>%
+  select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+#Load data just for year 2018 
+house_vote_share_by_district_2018 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
+  filter(raceYear == 2018) %>%
+  select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+# Change from at large states w only one district to a code-able suffix
+house_vote_share_by_district_2018$CD[grep(pattern = "-AL", x = house_vote_share_by_district_2018$CD)] <- c("AK-01","DE-01","MT-01","ND-01","SD-01", "VT-01","WY-01")
+
+#Cleaned 2018 data from Ethan  
+ratings_share_2018 <-read.csv("~/Desktop/2018_ratings.csv")
+
+#Incumbent list
+incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+
+# GROUND GAME LAB SECTION NOTES ##
+
+dist_pv_df <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+# read in cvap
+cvap_district <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
+# mutate geoid for merging
+cvap_district <- cvap_district %>%
+  rename(st_cd_fips = geoid)
+
+# select relevant years from voting data
+table(dist_pv_df$year)
+# 2012 - from 2018
+# 2014, 2016, 2018, 2020 - from 2020
+dist_pv_df <- dist_pv_df %>%
+  filter(year == 2018 )
+table(dist_pv_df$st_cd_fips)
+
+# merge
+dist_pv_cvap <- dist_pv_df %>%
+  inner_join(cvap_district, by = c('st_cd_fips', 'year'))
+
+# mutate turnout
+dist_pv_cvap <- dist_pv_cvap %>%
+  mutate(totalvotes = RepVotes + DemVotes,
+         turnout = totalvotes/cvap)
+# save
+
+# mutate votes percent for glm
+dist_pv_cvap <- dist_pv_cvap %>%
+  mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+         RepVotesMajorPct = RepVotesMajorPercent/100)
+
+# drop uncontested seats
+dist_pv_cvap_closed <- dist_pv_cvap %>%
+  filter(!is.na(DemCandidate), !is.na(RepCandidate)) %>%
+  mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+         RepVotesMajorPct = RepVotesMajorPercent/100)
+  
+```
+
+```{r map data, include= FALSE}
+require(sf)
+
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+
+# load 114th congress
+
+cd114 <- get_congress_map(114)
+
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+
+cd114 <- cd114 %>% left_join(house_party_vote_share_by_district, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+
+#cd114 <- cd114 %>% inner_join(local_model_data, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+```
+
+
+```{r theme janet, include = FALSE}
+theme_janet <- function(base_size = 13, base_family = "") {
+  theme_grey(base_size = base_size, base_family = base_family) %+replace%
+    theme(
+      
+      # Base elements which are not used directly but inherited by others
+      line =              element_line(colour = '#DADADA', size = 0.75, 
+                                       linetype = 1, lineend = "butt"),
+      rect =              element_rect(fill = "#F0F0F0", colour = "#F0F0F0", 
+                                       size = 0.5, linetype = 1),
+      text =              element_text(family = base_family, face = "plain",
+                                       colour = "#656565", size = base_size,
+                                       hjust = 0.5, vjust = 0.5, angle = 0, 
+                                       lineheight = 0.9),
+      
+      # Modified inheritance structure of text element
+      plot.title =        element_text(size = rel(1.5), family = '' , 
+                                       face = 'bold', hjust = -0.05, 
+                                       vjust = 1.5, colour = '#3B3B3B'),
+      axis.title.x =      element_text(),
+      axis.title.y =      element_text(),
+      axis.text =         element_text(),
+      
+      # Modified inheritance structure of line element
+      axis.ticks =        element_line(),
+      panel.grid.major =  element_line(),
+      panel.grid.minor =  element_blank(),
+      
+      # Modified inheritance structure of rect element
+      plot.background =   element_rect(),
+      panel.background =  element_rect(),
+      legend.key =        element_rect(colour = '#DADADA'),
+      
+      # Modifiying legend.position
+      legend.position = 'none',
+      
+      complete = TRUE
+    )
+}
+```
+
+**Note that 2018 in comparison to the model in lab that included more years has a greater correlation it seems of voter turnout and democratic major vote pct. **
+```{r, lm for turnout, echo=FALSE}
+# basic lm
+fit1 <- lm(DemVotesMajorPercent ~ turnout,
+              data = dist_pv_cvap_closed)
+summary(fit1)
+
+fit1_glm <- glm(DemVotesMajorPct ~ turnout,
+              data = dist_pv_cvap_closed, family = binomial(link="logit"))
+summary(fit1_glm)
+
+# visualize
+turnout_plot <- ggplot(dist_pv_cvap_closed, aes(x = turnout, y = DemVotesMajorPercent)) + 
+  geom_point() +
+  stat_smooth(method='lm', formula= y~x)+
+  theme_janet() + 
+  ggtitle("2018 Voter Turnout v. Democratic Major Votes Percent")
+  
+ggplotly(turnout_plot)
+```
+
+Adding voter turnout into my predictive model to see how it might affect my results. 
+
+```{r}
+#Merge datasets from last week for local model and plot districts to see how it influences. 
+
+#Possible way to approach this is to take all the data i have from previous years on voter turnout on midterm years only and then create a table w a prediction for 2022 and append that to my last week model.
+
+# read in cvap
+turnout_gen <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
+# mutate geoid for merging
+turnout_gen <- turnout_gen %>%
+  rename(st_cd_fips = geoid)
+
+turnout_gen <- incumbentslist %>%
+  inner_join(cvap_district, by = c('st_cd_fips', 'year'))
+
+turnout_gen <- turnout_gen %>%
+  mutate(totalvotes = RepVotes + DemVotes,
+         turnout = totalvotes/cvap)
+# Filter out for only midterm years and non-presidential bc I think that might have an influence / skew data to more turnout than we should expect empirically.  
+turnout_gen <- turnout_gen %>%
+  filter(year == 2012 | year == 2014 | year == 2018)
+
+#Create linear function to then predict voter turnout.
+
+turnout <- lm(turnout ~ year + state.x + president_party + cvap + winner_candidate_inc, data = turnout_gen)
+
+
+summ(turnout)
+
+turnoutpred_2022 <- data.frame()
+
+turnoutpred <- as.data.frame(predict(turnout, new_data = turnoutpred_2022))
+
+turnout_gen$prediction22 <- turnoutpred$`predict(turnout, new_data = turnoutpred_2022)`
+
+#Added column for 2022 prediction now I can go ahead and map how well my model is prediction expected turnout v. actual turnout 
+
+#add margin column 
+turnout_gen <- turnout_gen %>%
+  mutate(margin = turnout - prediction22)
+
+turnout_18 <- turnout_gen %>%
+  filter(year == 2018)
+
+districts_simp <- districts_simp %>% 
+  inner_join(turnout_18, by = 'district_id')
+
+```
+
+Plotting differences in margin for turnout to test the accuracy of my prediction variable for 2022 turnout to add to my model later. Red indicates that the actual value is less than predicted value, therefore my model is under predicting in the red areas. The same goes for the blue. Where its more blue, such as in Florida, the predictive model is having a hard time and is over predicting these areas for voter turnout.
+```{r}
+turnoutmargin <- ggplot() + 
+geom_sf(data= districts_simp,aes(fill= margin), color = "grey60", size = 0.05) + 
+ scale_fill_gradient2(low = "red", 
+                       mid = "white", 
+                       high = "blue", 
+                       midpoint = 0,
+                       name = "Difference in Margin") +
+  coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE) +  
+  theme_janet() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+  labs(fill = "Voter Turnout", title = "Differences in Model Prediction v Actual Turnout in 2018\n Actual minus Predicted")
+
+ggplotly(turnoutmargin)
+```
+
