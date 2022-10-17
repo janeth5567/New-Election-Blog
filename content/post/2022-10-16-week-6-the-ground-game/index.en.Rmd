@@ -18,7 +18,7 @@ type: ''
 subtitle: 'This week I will be looking at how the Ground Game or '
 image: ''
 ---
-```{r, setup and lab code, echo = FALSE}
+```{r, setup and lab code, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(collapse = TRUE)
 options(warn = -1)
@@ -215,7 +215,7 @@ ggplotly(turnout_plot)
 
 Adding voter turnout into my predictive model to see how it might affect my results. 
 
-```{r}
+```{r, echo=FALSE}
 #Merge datasets from last week for local model and plot districts to see how it influences. 
 
 #Possible way to approach this is to take all the data i have from previous years on voter turnout on midterm years only and then create a table w a prediction for 2022 and append that to my last week model.
@@ -264,7 +264,7 @@ districts_simp <- districts_simp %>%
 ```
 
 Plotting differences in margin for turnout to test the accuracy of my prediction variable for 2022 turnout to add to my model later. Red indicates that the actual value is less than predicted value, therefore my model is under predicting in the red areas. The same goes for the blue. Where its more blue, such as in Florida, the predictive model is having a hard time and is over predicting these areas for voter turnout.
-```{r}
+```{r, echo=FALSE}
 turnoutmargin <- ggplot() + 
 geom_sf(data= districts_simp,aes(fill= margin), color = "grey60", size = 0.05) + 
  scale_fill_gradient2(low = "red", 
