@@ -199,11 +199,6 @@ I will create a predictive model for turnout for 2022 and then test it against i
 ## Higher Turnout in 2018 Helped Democrats ##
 
 ```{r, lm for turnout and plots for turnout v. parties, echo =FALSE}
-# basic lm
-fit1 <- lm(DemVotesMajorPercent ~ turnout,
-data = dist_pv_cvap_closed)
-summary(fit1)
-
 # visualize
 rep_turnout_plot <- ggplot(dist_pv_cvap_closed, aes(x = turnout, y = RepVotesMajorPercent)) +
 geom_point() +
@@ -393,7 +388,7 @@ filter(!is.na(avg_margin))
 
 #replace missing polling values with toss up rating
 w6_df$avg <- w6_df$avg %>%
-replace_na(3.666667)
+replace_na(4.7)
 
 w6_df$Unemployed_prct <- w6_df$Unemployed_prct %>%
 replace_na(3.6)
@@ -467,9 +462,16 @@ axis.title.y=element_blank(),
 axis.text.y=element_blank(),
 axis.ticks.y=element_blank(),
 plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
-labs(fill = "DemMajorVotePct Prediction", title = "Week 6 Model Prediction8 \n DemMajorVotePct per District")
+labs(fill = "DemMajorVotePct Prediction", title = "Week 6 Model Prediction\n DemMajorVotePct per District")
 
 ggplotly(w6_plot)
+
+
+#try to filter so that only one district from each state shows up 
+
+districts22 <- w6_df %>% group_by(CD.x) %>% filter(row_number() == 1)
+
+#summary(districts22$DemVotePred22 >= 50)
 
 ```
 
@@ -478,17 +480,16 @@ ggplotly(w6_plot)
 
 My final prediction for week 6 is the following:
 
-Democratic Major Vote Percent
-Democratic Seats:
-
-Republican Major Vote Percent:
-Republican Seats:
+**Mean of my Model's Democratic Major Vote Percent: 53.00 %**
+**Model Prediction for Democratic Seats: 197 **
+**Model Prediction for Republican Seats: 231 **
 
 ## Notes from This Week / Issues ##
+
 I tried to improve my model by doing a few things:
 
-- Lost values when merging data sets and filled in NA's for districts within polling values to be set as 3.1667 for being a "toss up"
+- Lost values when merging data sets and filled in NA's for districts within polling values to be set as 4.1667 for slightly leaning republican to account for the fact that the incumbent president's party usually does worse in midterms historically. This definetly helped make sense of my model and in my opinion delivered much better predictions, overshadowing some of the other variables I think. 
 
-- Standardized any NA's in ad spend data with the mean of all.
+- Standardized any NA's in "ad spend data" with the mean of all.
 
 - Added more years to my model in order to try to get a better picture and prediction rather than just one month of one year in previous models.
