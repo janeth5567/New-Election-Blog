@@ -8,10 +8,6 @@ tags: []
 type: ''
 subtitle: ''
 image: ''
-output: 
-  html_document: 
-    smart: no
-    self_contained: no
 ---
 
 ```{r, setup and lab code, include=FALSE}
@@ -202,8 +198,7 @@ I will create a predictive model for turnout for 2022 and then test it against i
 
 ## Higher Turnout in 2018 Helped Democrats ##
 
-**Note that 2018 in comparison to the model in lab that included more years has a greater correlation it seems of voter turnout and democratic major vote pct. **
-```{r, lm for turnout, include =FALSE}
+```{r, lm for turnout and plots for turnout v. parties, echo =FALSE}
 # basic lm
 fit1 <- lm(DemVotesMajorPercent ~ turnout,
 data = dist_pv_cvap_closed)
@@ -286,7 +281,7 @@ inner_join(turnout_18, by = 'district_id')
 
 ```
 
-Model for predicting voter turnout for 2022 election, this model has an R-squared of 0.69. It takes state, year, president_party, cvap, and incumbency into account. I will be using this to predict the overall Democratic Major Vote Percent as well as the seat distribution for the 2022 Midterm election.
+This model uses previous midterm election data since 2012 to predict voter turnout for the 2022 election. I excluded presidential years since they skew data towards a higher turnout (Insert Citation) and 2022 doesn't happen to be a presidential year. It has an R-squared of 0.69. It takes state, year, president_party, cvap, and incumbency into account. I will be using this to predict the overall Democratic Major Vote Percent as well as the seat distribution for the 2022 Midterm election.
 
 ```{r, local model data build, include=FALSE}
 economy_q4 <- economy %>%
