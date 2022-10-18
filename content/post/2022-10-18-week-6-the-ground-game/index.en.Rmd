@@ -196,7 +196,7 @@ I will create a predictive model for turnout for 2022 and then test it against i
 
 ## Visualizing Voter Turnout v. Party Major Vote Percent in 2018 ##
 
-**Overall, Higher Turnout in 2018 Helped Democrats **
+### Overall, Higher Turnout in 2018 Helped Democrats ###
 
 ```{r, rep plot for turnout, echo =FALSE}
 # visualize
