@@ -6,7 +6,7 @@ slug: []
 categories: []
 tags: []
 type: ''
-subtitle: ''
+subtitle: 'This week, I will focus on how the "Ground Game" or direct mobilization of voter turnout may affect election outcomes.'
 image: ''
 ---
 
@@ -196,9 +196,9 @@ I will create a predictive model for turnout for 2022 and then test it against i
 
 ## Visualizing Voter Turnout v. Party Major Vote Percent in 2018 ##
 
-## Higher Turnout in 2018 Helped Democrats ##
+**Overall, Higher Turnout in 2018 Helped Democrats **
 
-```{r, lm for turnout and plots for turnout v. parties, echo =FALSE}
+```{r, rep plot for turnout, echo =FALSE}
 # visualize
 rep_turnout_plot <- ggplot(dist_pv_cvap_closed, aes(x = turnout, y = RepVotesMajorPercent)) +
 geom_point() +
@@ -208,6 +208,9 @@ ggtitle("2018 Voter Turnout v.\n Republican Major Votes Percent")
 
 ggplotly(rep_turnout_plot)
 
+```
+
+```{r, dem plot for turn out, echo=FALSE}
 # visualize
 dem_turnout_plot <- ggplot(dist_pv_cvap_closed, aes(x = turnout, y = DemVotesMajorPercent)) +
 geom_point() +
@@ -216,8 +219,8 @@ theme_janet() +
 ggtitle("2018 Voter Turnout v.\n Democrat Major Votes Percent")
 
 ggplotly(dem_turnout_plot)
-
 ```
+
 
 Using just the 2018 data, I plotted the turnout and different parties major vote share percentage. As you can see, higher turnout had a slightly negative correlation to Republican Major Vote Percent while it had a positive correlation with Democratic Major Vote Percent. There are slightly more registered Democrats than Republicans in the US but Democrats are largely less active voters than Republican counterparts. This correlation in interesting to see at play. I think turnout will definitely help my model's fit this week.
 
@@ -480,15 +483,17 @@ districts22 <- w6_df %>% group_by(CD.x) %>% filter(row_number() == 1)
 
 My final prediction for week 6 is the following:
 
-**Mean of my Model's Democratic Major Vote Percent: 53.00 %**
-**Model Prediction for Democratic Seats: 197 **
-**Model Prediction for Republican Seats: 231 **
+- **Mean of my Model's Democratic Major Vote Percent: 53%**
+
+- **Model Prediction for Democratic Seats: 197 **
+
+- **Model Prediction for Republican Seats: 231 **
 
 ## Notes from This Week / Issues ##
 
 I tried to improve my model by doing a few things:
 
-- Lost values when merging data sets and filled in NA's for districts within polling values to be set as 4.1667 for slightly leaning republican to account for the fact that the incumbent president's party usually does worse in midterms historically. This definetly helped make sense of my model and in my opinion delivered much better predictions, overshadowing some of the other variables I think. 
+- Lost values when merging data sets and filled in NA's for districts within polling values to be set as 4.1667 for slightly leaning republican to account for the fact that the incumbent president's party usually does worse in midterms historically. This definitely helped make sense of my model and in my opinion delivered much better predictions, overshadowing some of the other variables I think. 
 
 - Standardized any NA's in "ad spend data" with the mean of all.
 
