@@ -5,6 +5,7 @@ date: "2022-10-16"
 categories:
 - R
 - Polling
+<<<<<<< HEAD
 tags:
 - plot
 - regression
@@ -21,6 +22,26 @@ output:
 options(blogdown.knit.on_save = TRUE)
 knitr::opts_chunk$set(echo = FALSE)
 options(warn = -1)
+=======
+- national
+- local
+- Economy
+- incumbancy
+- ads
+tags:
+- plot
+- regression
+type: ''
+subtitle: 'This week I will be looking at the Ground Game and how political mobilization can aid campaigns' 
+image: ''
+---
+```{r, setup and lab code, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(collapse = TRUE)
+options(warn = -1)
+options(scipen = 999)
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 
 # read in district-level voting data
 library(readr)
@@ -192,11 +213,21 @@ This week's focus is on mobilization of voters and how voter turnout may have an
 
 I will create a predictive model for turnout for 2022 and then test it against its predictions for 2018 versus actual outcomes to see how closely it will predict. Then, after I add in the variable of turnout into my existing model from previous weeks I will update my visualization and predictions.
 
+<<<<<<< HEAD
 ## Visualizing Voter Turnout v. Party Major Vote Percent in 2018
 
 **Higher Turnout in 2018 Helped Democrats**
 
 ```{r, lm for turnout, include = FALSE}
+=======
+
+## Visualizing Voter Turnout v. Party Major Vote Percent in 2018 ##
+
+## Higher Turnout in 2018 Helped Democrats ##
+
+**Note that 2018 in comparison to the model in lab that included more years has a greater correlation it seems of voter turnout and democratic major vote pct. **
+```{r, lm for turnout, echo=FALSE}
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 # basic lm
 fit1 <- lm(DemVotesMajorPercent ~ turnout,
 data = dist_pv_cvap_closed)
@@ -224,11 +255,22 @@ ggplotly(dem_turnout_plot)
 
 Using just the 2018 data, I plotted the turnout and different parties major vote share percentage. As you can see, higher turnout had a slightly negative correlation to Republican Major Vote Percent while it had a positive correlation with Democratic Major Vote Percent. There are slightly more registered Democrats than Republicans in the US but Democrats are largely less active voters than Republican counterparts. This correlation in interesting to see at play. I think turnout will definitely help my model's fit this week.
 
+<<<<<<< HEAD
 **Note that 2018 results in comparison to the model in lab (which included more years) has a greater correlation it seems of voter turnout and democratic major vote pct.**
 
 ## Adding in Voter Turnout as a Predictor to Model ##
 
 ```{r adding turnout to datasets, include=FALSE}
+=======
+**Note that 2018 results in comparison to the model in lab (which included more years) has a greater correlation it seems of voter turnout and democratic major vote pct. **
+
+
+## Adding in Voter Turnout as a Predictor to Model ##
+
+Model that uses previous midterm election data since 2012 to predict voter turnout for the 2022 election. I excluded presidential years since they skew data towards a higher turnout (Insert Citation) and 2022 doesn't happen to be a presidential year.
+
+```{r adding turnout to datasets, echo=FALSE}
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 #Merge datasets from last week for local model and plot districts to see how it influences.
 
 #Possible way to approach this is to take all the data i have from previous years on voter turnout on midterm years only and then create a table w a prediction for 2022 and append that to my last week model.
@@ -275,7 +317,11 @@ inner_join(turnout_18, by = 'district_id')
 
 ```
 
+<<<<<<< HEAD
 This model uses previous midterm election data since 2012 to predict voter turnout for the 2022 election. I excluded presidential years since they skew data towards a higher turnout (Insert Citation) and 2022 doesn't happen to be a presidential year. It has an R-squared of 0.69. It takes state, year, president_party, cvap, and incumbency into account. I will be using this to predict the overall Democratic Major Vote Percent as well as the seat distribution for the 2022 Midterm election.
+=======
+Model for predicting voter turnout for 2022 election, this model has an R-squared of 0.69. It takes state, year, president_party, cvap, and incumbency into account. I will be using this to predict the overall Democratic Major Vote Percent as well as the seat distribution for the 2022 Midterm election.
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 
 ```{r, local model data build, include=FALSE}
 economy_q4 <- economy %>%
@@ -317,11 +363,19 @@ inner_join(economy_q4, by = c("Year" = "year"))
 # Merge unemployment local to all state and district levels as equal. Merge by State.
 unemployment_local <- rename(unemployment_local, State = 'State.and.area')
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 #Include District Level Polling Data (if possible)
 #Using 2018 polling data to model our predictions
 local_model_data_w6 <- house_vote_share_by_district_2018 %>%
 inner_join(unemployment_local, by =  "State")
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 #Append the D and R Seats and national data to our local model for comparison in 2018.
 
 natl_data_2018 <- economy_model_data %>%
@@ -344,6 +398,12 @@ inner_join(incumbentslist, by = c("State" = "state","district_id" = "district_id
 local_model_data_w6 <- local_model_data_w6 %>%
 inner_join(ratings_share_2018, by = "CD")
 
+<<<<<<< HEAD
+=======
+
+## Ad spend
+
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 #Adding ad spending variable to our model
 
 #Clean up ad data and add to local model then run lm
@@ -365,7 +425,11 @@ inner_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="
 local_model_data_w6$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w6$Receipts))
 ```
 
+<<<<<<< HEAD
 ## Evaluating model's prediction for voter turnout vs. actual voter turnout in 2018.##
+=======
+## Evaluating model's prediction for voter turnout vs. actual voter turnout in 2018. ##
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 
 Here, I am plotting differences in margin for turnout to test the accuracy of my prediction variable for 2022 turnout to add to my model later. Red indicates that the actual value is less than predicted value, therefore my model is under predicting in the red areas. The same goes for the blue. Where its more blue, such as in Florida, the predictive model is having a hard time and is over predicting these areas for voter turnout. I am curious to see what exact variables in certain states are causing this phenomenon.
 
@@ -389,9 +453,12 @@ replace_na(3.6)
 
 w6_df$Receipts <- w6_df$Receipts %>%
 replace_na(960454)
+<<<<<<< HEAD
 
 #Simplify shapefile
 w6_df <- rmapshaper::ms_simplify(w6_df, keep = 0.01)
+=======
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 ```
 
 ```{r plot for margin between turnout , echo=FALSE}
@@ -415,12 +482,24 @@ labs(fill = "Voter Turnout", title = "Differences in Model Prediction v Actual T
 
 ggplotly(turnoutmargin)
 
+<<<<<<< HEAD
 
 ```
 
 ## Predicting for Major Democratic Vote Percent ##
 
 ```{r model for w6 dem vote pct, echo=FALSE}
+=======
+```
+
+
+# This Week's Model Prediction #
+
+## Predicting for Major Democratic Vote Percent ##
+
+```{r model for w6 dem vote pct, echo=FALSE}
+
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 w6_local_model <- lm(DemVotesMajorPercent.x ~ Unemployed_prct + winner_candidate_inc.x + Receipts + turnout + avg, data = w6_df)
 
 summ(w6_local_model)
@@ -432,6 +511,7 @@ w6_simple <- w6_df %>%
 select(State, Year, Month, cd, R_majorvote_pct, D_majorvote_pct, turnout, prediction22, DemVotesMajorPercent, DemVotePred22) %>%
 filter(Year == 2018)
 
+<<<<<<< HEAD
 
 ```
 
@@ -439,6 +519,12 @@ The R-squared of my model was slightly increased, from 0.74 to 0.75. Another imp
 
 ## Visualizing 2022 Midterm Vote Prediction ##
 
+=======
+```
+The R-squared of my model was slightly increased, from 0.74 to 0.75. Another important thing to note about this model is how significant the avg variable seems to be, which is indicative of the polling avg rating from 1 (Solid Democrat) to 7 (Solid Republican). The least important variable in terms of significance for this model is the rate of unemployment, suggesting that the economy is less of an indicator than the conditions of voter turnout, polling predictions, and money spent on ads.
+
+## Visualizing 2022 Midterm Vote Prediction ##
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
 ```{r plot of model prediction2022, echo=FALSE}
 w6_plot <- ggplot() +
 geom_sf(data= w6_df, aes(fill= DemVotePred22), color = "grey60", size = 0.05) +
@@ -460,4 +546,25 @@ labs(fill = "DemMajorVotePct Prediction", title = "Week 6 Model Prediction8 \n D
 
 ggplotly(w6_plot)
 
+<<<<<<< HEAD
 ```
+=======
+```
+
+
+# Final Thoughts and Predictions #
+
+My final prediction for week 6 is the following:
+
+Democratic Major Vote Percent
+Democratic Seats:
+
+Republican Major Vote Percent:
+Republican Seats:
+
+## Notes from This Week / Issues ##
+I tried to improve my model by doing a few things:
+- Lost values when merging data sets and filled in NA's for districts within polling values to be set as 3.1667 for being a "toss up"
+- Standardized any NA's in ad spend data with the mean of all.
+- Added more years to my model in order to try to get a better picture and prediction rather than just one month of one year in previous models.
+>>>>>>> 21a3345b5db772864401e78baebb52736b12864c
