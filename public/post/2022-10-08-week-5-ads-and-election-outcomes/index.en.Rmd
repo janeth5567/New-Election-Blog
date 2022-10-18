@@ -11,7 +11,6 @@ tags:
   - plot
   - regression
 ---
-
 In this post, I will investigate the effects that ad spending can have on the outcome of elections on a district by district level. Using my current model, I will incorporate data found on the FEC's website to approximate ad spend on a campaign district level. Using how much money was spent will be my variable, though I am aware that some scholarship says that number of ads rather than money spent is also a good indicator. I will also run tests on that next week. I will also be using data from the 2018 midterm to build my predictive model. 
 
 # Advertising and Election Outcomes # 
