@@ -7,16 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
     <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
-    <lastBuildDate>Sun, 16 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/incumbancy/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Week 6: The Ground Game </title>
-      <link>https://username.github.io/post/2022-10-16-week-6-the-ground-game/</link>
-      <pubDate>Sun, 16 Oct 2022 00:00:00 +0000</pubDate>
-      <author>youremail@domain.com (Janet Hernandez)</author>
-      <guid>https://username.github.io/post/2022-10-16-week-6-the-ground-game/</guid>
-      <description>Note that 2018 in comparison to the model in lab that included more years has a greater correlation it seems of voter turnout and democratic major vote pct. ## ## Call: ## lm(formula = DemVotesMajorPercent ~ turnout, data = dist_pv_cvap_closed) ## ## Residuals: ## Min 1Q Median 3Q Max ## -34.060 -12.411 -2.361 11.883 45.749 ## ## Coefficients: ## Estimate Std. Error t value Pr(&amp;gt;|t|) ## (Intercept) 46.623 5.607 8.</description>
-    </item>
-    
+    <lastBuildDate>Sat, 08 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/categories/incumbancy/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Week 5: Ad Spend and Election Outcomes</title>
       <link>https://username.github.io/post/2022-10-08-week-5-ads-and-election-outcomes/</link>

@@ -7,14 +7,23 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
     <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
-    <lastBuildDate>Sun, 16 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 18 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Week 6: The Ground Game </title>
+      <title>Week 6: The Ground Game</title>
+      <link>https://username.github.io/post/2022-10-18-week-6-the-ground-game/</link>
+      <pubDate>Tue, 18 Oct 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-10-18-week-6-the-ground-game/</guid>
+      <description>The Ground Game This week’s focus is on mobilization of voters and how voter turnout may have an impact on who does well in elections. Most often, campaigns will focus on turning out those who are infrequent voters that align well with their party and or candidate’s platform. Methods include texting, calling, and knocking on potential voter’s doors to get out the vote. One big question I will try to investigate is whether or not there’s a relationship between high turnout and the outcomes of either one of the major parties.</description>
+    </item>
+    
+    <item>
+      <title>Week 6: The Ground Game</title>
       <link>https://username.github.io/post/2022-10-16-week-6-the-ground-game/</link>
       <pubDate>Sun, 16 Oct 2022 00:00:00 +0000</pubDate>
       <author>youremail@domain.com (Janet Hernandez)</author>
       <guid>https://username.github.io/post/2022-10-16-week-6-the-ground-game/</guid>
-      <description>Note that 2018 in comparison to the model in lab that included more years has a greater correlation it seems of voter turnout and democratic major vote pct. ## ## Call: ## lm(formula = DemVotesMajorPercent ~ turnout, data = dist_pv_cvap_closed) ## ## Residuals: ## Min 1Q Median 3Q Max ## -34.060 -12.411 -2.361 11.883 45.749 ## ## Coefficients: ## Estimate Std. Error t value Pr(&amp;gt;|t|) ## (Intercept) 46.623 5.607 8.</description>
+      <description>The Ground Game This week’s focus is on mobilization of voters and how voter turnout may have an impact on who does well in elections. Most often, campaigns will focus on turning out those who are infrequent voters that align well with their party and or candidate’s platform. Methods include texting, calling, and knocking on potential voter’s doors to get out the vote. One big question I will try to investigate is whether or not there’s a relationship between high turnout and the outcomes of either one of the major parties.</description>
     </item>
     
     <item>
