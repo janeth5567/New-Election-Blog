@@ -9,7 +9,6 @@ type: ''
 subtitle: 'This week, I will focus on how the "Ground Game" or direct mobilization of voter turnout may affect election outcomes.'
 image: ''
 ---
-
 ```{r, setup and lab code, include=FALSE}
 options(blogdown.knit.on_save = TRUE)
 knitr::opts_chunk$set(echo = FALSE)
