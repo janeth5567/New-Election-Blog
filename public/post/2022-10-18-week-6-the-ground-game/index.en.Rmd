@@ -506,6 +506,16 @@ In [Enos and Fowler's](https://hollis.harvard.edu/primo-explore/fulldisplay?doci
 
 Overall, one thing to note about my model (which I spoke to Professor Enos about) is how heavily it relies on polling data for its predictive power. I think this is very indicative of how polls can be good predictors on empirical grounds for how an election will sway. 
 
+# References #
+
+Joshua P Darr and Matthew S Levendusky. Relying on the Ground Game: The Placement and Effect of Campaign Field Offices. American Politics Research, 42(3):529–548, 2014. ISSN 1532-673X. URL: https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_gale_infotracacademiconefile_A375757032&context=PC&vid=HVD2& search_scope=everything&tab=everything&lang=en_US.
+
+Ryan D. Enos and Anthony Fowler. Aggregate Effects of Large-Scale Campaigns on Voter Turnout. Political Science Research and Methods, 6(4):733–751, 2016. URL https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_ proquest_journals_2117059848&context=PC&vid=HVD2&search_scope=everything& tab=everything&lang=en_US.
+
+Ryan D Enos and Eitan D Hersh. Party Activists as Campaign Advertisers: The Ground Campaign as a Principal-Agent Problem. American Political Science Review, 109(02): 252–278, 2015. URL: https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_cdi_proquest_journals_1675033350&context=PC&vid=HVD2&search_ scope=everything&tab=everything&lang=en_US.
+
+
+
 
 
 
