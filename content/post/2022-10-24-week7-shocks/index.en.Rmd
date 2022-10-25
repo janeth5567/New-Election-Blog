@@ -39,7 +39,6 @@ library(blogdown)
 library(ggthemes)
 library(plyr)
 
-
 # load up hidden api key
 article_api <- "3tPdNNFHIqqJySrXcFHjvgaFeCIac11M"
 semantic_api <- Sys.getenv("SEMANTIC_API")
@@ -49,77 +48,75 @@ base_url_art <- "http://api.nytimes.com/svc/search/v2/articlesearch.json?q="
 base_url_sem <- "http://api.nytimes.com/svc/semantic/v2/concept/name"
 # 
 # # set parameters
-term <- "inflation"
+term <- "inflation+biden"
 facet_field <- "day_of_week"
 facet <- "true"
 fq <- "&fq=glocation='United States'"
 begin_date <- "20220101"
 end_date <- "20221022"
-# 
+
 
 complete_url <-paste0(base_url_art,fq =term,"&facet_field=",facet_field,"&facet=",facet,"&begin_date=",begin_date,"&end_date=",end_date,"&api-key=",article_api,sep = "")
-# 
-# # import dataset to R
-sus <- jsonlite::fromJSON(complete_url)
-# 
+# import dataset to R
+
+sus <- jsonlite::fromJSON(complete_url, flatten = TRUE)
+
 # # view how many hits
 sus$response$meta$hits
-# 
+
+
 hits <- sus$response$meta$hits
-cat("There were ",hits," hits for the search term 'inflation' during 2022 to date",sep = "")
-# 
+cat("There were ",hits," hits for the search terms 'inflation' + 'biden' during 2022 to date",sep = "")
 max_pages <- round((hits / 10) - 1)
 
 # # store all pages in list
 pages <- list()
 
-# # trying again - WORKS!!!
-# sus0 <- fromJSON(paste0(complete_url, "&page=0"), flatten = TRUE)
- #nrow(sus0$response$docs)
-# sus1 <- fromJSON(paste0(complete_url, "&page=1"), flatten = TRUE)
-# nrow(sus1$response$docs)
-# sus2 <- fromJSON(paste0(complete_url, "&page=2"), flatten = TRUE)
-# nrow(sus2$response$docs)
+#  trying again - WORKS!!!
+sus0 <-jsonlite::fromJSON(paste0(complete_url, "&page=0"), flatten = TRUE)
+sus1 <- jsonlite::fromJSON(paste0(complete_url, "&page=1"), flatten = TRUE)
+sus2 <- jsonlite::fromJSON(paste0(complete_url, "&page=2"), flatten = TRUE)
+Sys.sleep(5)
+sus3 <- jsonlite::fromJSON(paste0(complete_url, "&page=3"), flatten = TRUE)
+sus4 <- jsonlite::fromJSON(paste0(complete_url, "&page=4"), flatten = TRUE)
+Sys.sleep(5)
+sus5 <- jsonlite::fromJSON(paste0(complete_url, "&page=5"), flatten = TRUE)
+Sys.sleep(10)
+sus6 <- jsonlite::fromJSON(paste0(complete_url, "&page=6"), flatten = TRUE)
+sus7 <- jsonlite::fromJSON(paste0(complete_url, "&page=7"), flatten = TRUE)
+Sys.sleep(5)
+sus8 <- jsonlite::fromJSON(paste0(complete_url, "&page=8"), flatten = TRUE)
+Sys.sleep(5)
+sus9 <- jsonlite::fromJSON(paste0(complete_url, "&page=9"), flatten = TRUE)
+sus10 <- jsonlite::fromJSON(paste0(complete_url, "&page=10"), flatten = TRUE)
+Sys.sleep(10)
+sus11 <- jsonlite::fromJSON(paste0(complete_url, "&page=11"), flatten = TRUE)
+sus12 <- jsonlite::fromJSON(paste0(complete_url, "&page=12"), flatten = TRUE)
+Sys.sleep(5)
+sus13 <- jsonlite::fromJSON(paste0(complete_url, "&page=13"), flatten = TRUE)
+sus14 <- jsonlite::fromJSON(paste0(complete_url, "&page=14"), flatten = TRUE)
+Sys.sleep(5)
+sus15 <- jsonlite::fromJSON(paste0(complete_url, "&page=15"), flatten = TRUE)
+Sys.sleep(10)
 
-# organizations <- rbind_pages(
-#   list(sus0$response$docs, sus1$response$docs, sus2$response$docs)
-# )
- #nrow(organizations)
-# 
- pages <- list()
- 
- Sys.sleep(1) 
- for(i in 0:50){
-   mydata <- jsonlite::fromJSON(paste0(complete_url, "&page=", i))
-   message("Retrieving page ", i)
-   pages[[i+1]] <- mydata$response$docs
-   Sys.sleep(6) 
- }
 
-# #combine all into one
-organizations <- rbind_pages(pages)
-# 
-# #check output
-nrow(organizations)
-# 
-colnames(organizations)
 
-# 
-# #check output
-nrow(mydata)
-# 
-# # save df
-saveRDS(organizations, file = "inflation_2022.RDS")
+NYTSearch <- rbind_pages(list(sus0$response$docs, sus1$response$docs, sus2$response$docs,sus3$response$docs, sus4$response$docs, sus5$response$docs, sus6$response$docs, sus7$response$docs, sus8$response$docs, sus9$response$docs,sus10$response$docs, sus11$response$docs, sus12$response$docs, sus13$response$docs, sus14$response$docs, sus15$response$docs ))
+
+
+# save df
+saveRDS(NYTSearch, file = "inflation_2022.RDS")
 
 # reload
 mydata <- readRDS("inflation_2022.RDS")
 
 # check colnames
 colnames(mydata)
+
 ```
 
 
-```{r visualization, include=FALSE}
+```{r visualization, echo=FALSE}
 # visualization by month
 library(dplyr)
 month <- mydata %>% 
@@ -130,19 +127,8 @@ month <- mydata %>%
     labs(y = "Article Count", x = "",
          title = "NYT Articles mentioning inflation in the US in 2022",
          color = "")
-
 month
-# visualization by day
-day <- mydata %>% 
-  group_by(month_day = paste0(month(pub_date, label = T),
-           day = day(pub_date))) %>% 
-  dplyr::summarize(count = n()) %>% 
-  ggplot(aes(month_day, count, group = 1, color = count)) +
-    geom_line() +
-    labs(y = "Article Count", x = "",
-         title = "NYT Articles mentioning inflation in the US in 2022",
-         color = "")
-day
+
 # how about visualization by week
 # extract raw date
 mydata <- mydata %>% 
@@ -153,7 +139,7 @@ mydata <- mydata %>%
   mutate(week = strftime(publ_date, format = "%V"))
 ```
 
-```{r, plot for inflation mentions}
+```{r, weekly plot, echo=FALSE}
 # plot
 mydata %>% 
   group_by(week) %>% 
@@ -161,20 +147,20 @@ mydata %>%
   ggplot(aes(week, count, group = 1, color = count)) +
   geom_line() +
     labs(y = "Article Count", x = "Week",
-         title = "NYT Articles Mentioning Inflation in the US in 2022",
+         title = "NYT Articles Mentioning Inflation + Biden in the US in 2022",
          color = "")  
 
 ```
 
 
 
+
 ## Peak Inflation Coverage Lines Up With Unexpected Shift
 
 
-```{r, generic ballot plot}
+```{r, gen ballot, echo=FALSE, message=FALSE, warning=FALSE}
 #now comparing this to generic ballot
 X538_generic_ballot_averages_2018_2022 <- read.csv("~/Downloads/Section data/drive-download-20220922T150729Z-001/538_generic_ballot_averages_2018-2022.csv")
-
 
 gb <- X538_generic_ballot_averages_2018_2022
 
@@ -185,7 +171,7 @@ gb <- gb %>%
   filter(year == 2022) %>%
   mutate(week = strftime(date_, format = "%V")) # Jan 1 looks weird 
 
- #get avg by party and week
+#get avg by party and week
 dem <- gb %>%
   filter(candidate == 'Democrats')
 x <- plyr::ddply(dem, .(week), function(z) mean(z$pct_estimate))
@@ -231,7 +217,10 @@ polls_df <- polls_df %>%
 my_colors <- c("blue", "red")
 scale_color_manual(values = my_colors)
 
-ballotsupport <- polls_df %>%
+```
+
+```{r, plot for generic ballot, echo=FALSE, message=FALSE, warning=FALSE}
+polls_df %>%
   group_by(candidate == 'Democrats') %>%
   mutate(date_ = as.Date(date_, format = '%Y-%m-%d')) %>%
   ggplot(aes(x = week, y = avg_support,
@@ -239,11 +228,15 @@ ballotsupport <- polls_df %>%
   scale_color_manual(values = my_colors)+
    geom_line(aes(group=candidate), size = 0.3) + geom_point(size = 0.3) +
      #scale_x_date(date_labels = "%m, %Y") +
-   ylab("generic ballot support") + xlab("") +
-    theme_fivethirtyeight() +
-geom_segment(x=("31"), xend=("31"),y=0,yend=30, lty=2, color="purple", alpha=0.4) + 
-  annotate("text", x=("31"), y=31, label="Peak Inflation Coverage", size=5) 
+   ylab("Generic Ballot Support") + xlab("Week") +
+      theme_light() +
+geom_segment(x=("31"), xend=("31"),y=0,yend=30, lty=2, color="black", alpha=0.3) + 
+  geom_segment(x=("33"), xend=("33"),y=0,yend=30, lty=2, color="black", alpha=0.3) + 
+annotate("text", x=("30"), y=27, label="Peak Inflation Coverage Window\n in NYT", size=4) 
 
-ggplotly(ballotsupport)
 ```
+##Inflation + Biden News Punishing the Republicans More?
+
+One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. Correlation does not equate to causation so there may be a possibility than other news coverage in these weeks impacted Americans' support of the parties. 
+
 
