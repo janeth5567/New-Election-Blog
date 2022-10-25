@@ -37,6 +37,8 @@ library(reactable)
 library(sqldf)
 library(blogdown)
 library(ggthemes)
+library(plyr)
+
 
 # load up hidden api key
 article_api <- "3tPdNNFHIqqJySrXcFHjvgaFeCIac11M"
