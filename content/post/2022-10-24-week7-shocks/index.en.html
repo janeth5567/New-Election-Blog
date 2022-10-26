@@ -7,69 +7,35 @@ slug: "week7-shocks"
 
 
 
-<div id="shocks-and-election-impact" class="section level1">
-<h1>Shocks and Election Impact</h1>
+<div id="do-shocks-have-a-significant-impact-on-elections" class="section level1">
+<h1>Do Shocks Have a Significant Impact on Elections?</h1>
 <p>This week, I will be doing the first blog extension. I will be replicating the Dobbs NYT example from section, but with the shock of recent inflation news. I predict that rising coverage on the state of the economy and inflation would have a negative affect on the President’s party (Democrats) for generic ballot support. I am unsure whether or not this would also translate to an increase in support for Republicans but I am certain that I predict to see some hesitation towards Democrats due to economic inflation and market performances. I will be using the NYT developer API to source my data for news coverage.</p>
+<p>I will also try to modify and revise my existing predictive model from week 6.</p>
+<div id="background-literature-on-shocks-and-elections" class="section level2">
+<h2>Background Literature on Shocks and Elections</h2>
 <p>• Natural disaster: Shark attack (Achen and Bartels 2017), tornado
 (Healy and Malhotra 2010) ⇝ decreased support for incumbents
 • Sports (Healy, Mo, Malhotra 2010): college football team losing
 their game ⇝ decreased support for incumbents
 • Lottery (Bagues and Esteve-Volart 2016): Towns winning Spanish
-Christmas lottery ⇝ increased support for incumbents</p>
-<p>Global comparison (Powell &amp; Whitten 1993): Punish only when
+Christmas lottery ⇝ increased support for incumbents
+Global comparison (Powell &amp; Whitten 1993): Punish only when
 the gov’t is doing worse than other gov’ts
 • Ex: the speed of recovery</p>
-<p>I will also try to modify and revise my existing predictive model from week 6.</p>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/visualization-1.png" width="672" /></p>
+</div>
+<div id="new-york-times-coverage-on-biden-and-inflation" class="section level2">
+<h2>New York Times Coverage on Biden and Inflation</h2>
+<p>Below is a plot of how the coverage of the terms ‘inflation’ + ‘Biden’ have changed from the period between January 2022 until October 15th, 2022. We can clearly see there is a huge spike in the months of August between weeks 31-33. I am looking at the first 15 pages of coverage from the NYT API. This equates to 160 articles out of a total of around 1000 written.</p>
+<p>In the next plot, I will compare how this coverage lines up with general trends in the general ballot support for Democrats and Republicans in the same time period.</p>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/weekly%20plot-1.png" width="672" /></p>
-<div id="peak-inflation-coverage-lines-up-with-unexpected-shift" class="section level2">
-<h2>Peak Inflation Coverage Lines Up With Unexpected Shift</h2>
-<pre><code>## &lt;ggproto object: Class ScaleDiscrete, Scale, gg&gt;
-##     aesthetics: colour
-##     axis_order: function
-##     break_info: function
-##     break_positions: function
-##     breaks: waiver
-##     call: call
-##     clone: function
-##     dimension: function
-##     drop: TRUE
-##     expand: waiver
-##     get_breaks: function
-##     get_breaks_minor: function
-##     get_labels: function
-##     get_limits: function
-##     guide: legend
-##     is_discrete: function
-##     is_empty: function
-##     labels: waiver
-##     limits: NULL
-##     make_sec_title: function
-##     make_title: function
-##     map: function
-##     map_df: function
-##     n.breaks.cache: NULL
-##     na.translate: TRUE
-##     na.value: grey50
-##     name: waiver
-##     palette: function
-##     palette.cache: NULL
-##     position: left
-##     range: &lt;ggproto object: Class RangeDiscrete, Range, gg&gt;
-##         range: NULL
-##         reset: function
-##         train: function
-##         super:  &lt;ggproto object: Class RangeDiscrete, Range, gg&gt;
-##     rescale: function
-##     reset: function
-##     scale_name: manual
-##     train: function
-##     train_df: function
-##     transform: function
-##     transform_df: function
-##     super:  &lt;ggproto object: Class ScaleDiscrete, Scale, gg&gt;</code></pre>
-<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plot%20for%20generic%20ballot-1.png" width="672" />
-## Inflation + Biden News Punishing the Republicans More? ##
-One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. Correlation does not equate to causation so there may be a possibility than other news coverage in these weeks impacted Americans’ support of the parties.</p>
+</div>
+<div id="peak-inflation-coverage-lines-up-with-unexpected-drops-in-support" class="section level2">
+<h2>Peak Inflation Coverage Lines Up With Unexpected Drops in Support</h2>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/plot%20for%20generic%20ballot-1.png" width="672" /></p>
+<p>Above is a graph that compares the peak weeks of coverage as evidenced in the plot above (Weeks 31-33) to the results of general ballot support pollings in the same time period.</p>
+</div>
+<div id="inflation-and-biden-news-punishing-the-republicans-more" class="section level2">
+<h2>Inflation and Biden News Punishing the Republicans More?</h2>
+<p>An interesting observation of this graph in particular is how the dates line up perfectly with an overall drop in approval ratings for both Democrats and Republicans. However, the drop is much more significant for the non-incumbent party (Republicans) rather than President Biden’s party. One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. This may be explained or investigated further by creating sentiment scores for how the coverage was portraying Biden’s response as either positive, negative, or neutral. Furthermore, the last thing to consider is that correlation does not equate to causation so there may be a possibility than other (possibly more important or popular) news coverage that I didn’t consider in these weeks impacted Americans’ support of the parties.</p>
 </div>
 </div>

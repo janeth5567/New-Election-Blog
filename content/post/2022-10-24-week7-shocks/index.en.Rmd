@@ -5,20 +5,9 @@ date: "2022-10-24"
 slug: "week7-shocks"
 ---
 
-# Shocks and Election Impact #
+# Do Shocks Have a Significant Impact on Elections? #
 
 This week, I will be doing the first blog extension. I will be replicating the Dobbs NYT example from section, but with the shock of recent inflation news. I predict that rising coverage on the state of the economy and inflation would have a negative affect on the President's party (Democrats) for generic ballot support. I am unsure whether or not this would also translate to an increase in support for Republicans but I am certain that I predict to see some hesitation towards Democrats due to economic inflation and market performances. I will be using the NYT developer API to source my data for news coverage. 
-
-• Natural disaster: Shark attack (Achen and Bartels 2017), tornado
-(Healy and Malhotra 2010) ⇝ decreased support for incumbents
-• Sports (Healy, Mo, Malhotra 2010): college football team losing
-their game ⇝ decreased support for incumbents
-• Lottery (Bagues and Esteve-Volart 2016): Towns winning Spanish
-Christmas lottery ⇝ increased support for incumbents
-
-Global comparison (Powell & Whitten 1993): Punish only when
-the gov’t is doing worse than other gov’ts
-• Ex: the speed of recovery
 
 I will also try to modify and revise my existing predictive model from week 6. 
 
@@ -73,31 +62,32 @@ max_pages <- round((hits / 10) - 1)
 pages <- list()
 
 #  trying again - WORKS!!!
+Sys.sleep(1)
 sus0 <-jsonlite::fromJSON(paste0(complete_url, "&page=0"), flatten = TRUE)
 sus1 <- jsonlite::fromJSON(paste0(complete_url, "&page=1"), flatten = TRUE)
 sus2 <- jsonlite::fromJSON(paste0(complete_url, "&page=2"), flatten = TRUE)
-Sys.sleep(5)
+Sys.sleep(16)
 sus3 <- jsonlite::fromJSON(paste0(complete_url, "&page=3"), flatten = TRUE)
 sus4 <- jsonlite::fromJSON(paste0(complete_url, "&page=4"), flatten = TRUE)
-Sys.sleep(5)
+Sys.sleep(16)
 sus5 <- jsonlite::fromJSON(paste0(complete_url, "&page=5"), flatten = TRUE)
-Sys.sleep(10)
 sus6 <- jsonlite::fromJSON(paste0(complete_url, "&page=6"), flatten = TRUE)
 sus7 <- jsonlite::fromJSON(paste0(complete_url, "&page=7"), flatten = TRUE)
-Sys.sleep(5)
+Sys.sleep(16)
 sus8 <- jsonlite::fromJSON(paste0(complete_url, "&page=8"), flatten = TRUE)
-Sys.sleep(5)
 sus9 <- jsonlite::fromJSON(paste0(complete_url, "&page=9"), flatten = TRUE)
+Sys.sleep(12)
 sus10 <- jsonlite::fromJSON(paste0(complete_url, "&page=10"), flatten = TRUE)
-Sys.sleep(10)
+Sys.sleep(15)
 sus11 <- jsonlite::fromJSON(paste0(complete_url, "&page=11"), flatten = TRUE)
 sus12 <- jsonlite::fromJSON(paste0(complete_url, "&page=12"), flatten = TRUE)
-Sys.sleep(5)
+Sys.sleep(12)
 sus13 <- jsonlite::fromJSON(paste0(complete_url, "&page=13"), flatten = TRUE)
 sus14 <- jsonlite::fromJSON(paste0(complete_url, "&page=14"), flatten = TRUE)
-Sys.sleep(5)
+Sys.sleep(12)
 sus15 <- jsonlite::fromJSON(paste0(complete_url, "&page=15"), flatten = TRUE)
-Sys.sleep(10)
+Sys.sleep(5)
+
 
 
 
@@ -110,26 +100,23 @@ saveRDS(NYTSearch, file = "inflation_2022.RDS")
 # reload
 mydata <- readRDS("inflation_2022.RDS")
 
-# check colnames
-colnames(mydata)
-
 ```
+
+## Background Literature on Shocks and Elections 
+
+• Natural disaster: Shark attack (Achen and Bartels 2017), tornado
+(Healy and Malhotra 2010) ⇝ decreased support for incumbents
+• Sports (Healy, Mo, Malhotra 2010): college football team losing
+their game ⇝ decreased support for incumbents
+• Lottery (Bagues and Esteve-Volart 2016): Towns winning Spanish
+Christmas lottery ⇝ increased support for incumbents
+Global comparison (Powell & Whitten 1993): Punish only when
+the gov’t is doing worse than other gov’ts
+• Ex: the speed of recovery
 
 
 ```{r visualization, echo=FALSE}
-# visualization by month
-library(dplyr)
-month <- mydata %>% 
-  group_by(month = month(pub_date, label = T)) %>% 
-  dplyr::summarize(count = n()) %>% 
-  ggplot(aes(month, count, group = 1, color = count)) +
-    geom_line() +
-    labs(y = "Article Count", x = "",
-         title = "NYT Articles mentioning inflation in the US in 2022",
-         color = "")
-month
-
-# how about visualization by week
+# visualization by week
 # extract raw date
 mydata <- mydata %>% 
   mutate(publ_date = substr(pub_date, 1, 10))
@@ -139,26 +126,26 @@ mydata <- mydata %>%
   mutate(week = strftime(publ_date, format = "%V"))
 ```
 
+## New York Times Coverage on Biden and Inflation
+
+Below is a plot of how the coverage of the terms 'inflation' + 'Biden' have changed from the period between January 2022 until October 15th, 2022. We can clearly see there is a huge spike in the months of August between weeks 31-33. I am looking at the first 15 pages of coverage from the NYT API. This equates to 160 articles out of a total of around 1000 written. 
+
+In the next plot, I will compare how this coverage lines up with general trends in the general ballot support for Democrats and Republicans in the same time period. 
+
 ```{r, weekly plot, echo=FALSE}
 # plot
 mydata %>% 
   group_by(week) %>% 
   dplyr::summarize(count = n()) %>% 
   ggplot(aes(week, count, group = 1, color = count)) +
-  geom_line() +
-    labs(y = "Article Count", x = "Week",
-         title = "NYT Articles Mentioning Inflation + Biden in the US in 2022",
+  geom_line() + theme_light()+ labs(y = "Article Count", x = "Week",
+         title = "Weekly NYT Articles Mentioning 'Inflation' + 'Biden' in 2022",
          color = "")  
 
 ```
 
 
-
-
-## Peak Inflation Coverage Lines Up With Unexpected Shift
-
-
-```{r, gen ballot, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, gen ballot setup, echo=FALSE, message=FALSE, warning=FALSE}
 #now comparing this to generic ballot
 X538_generic_ballot_averages_2018_2022 <- read.csv("~/Downloads/Section data/drive-download-20220922T150729Z-001/538_generic_ballot_averages_2018-2022.csv")
 
@@ -180,8 +167,7 @@ x$avg_dem <- x$V1
 x <- x %>%
    select(-V1)
 x$avg_dem <-  round(x$avg_dem , digits = 1)
-#
-#
+
 rep <- gb %>%
    filter(candidate == 'Republicans')
 y <- plyr::ddply(rep, .(week), function(z) mean(z$pct_estimate))
@@ -215,9 +201,10 @@ polls_df <- polls_df %>%
 
 # visualize polls
 my_colors <- c("blue", "red")
-scale_color_manual(values = my_colors)
 
 ```
+
+## Peak Inflation Coverage Lines Up With Unexpected Drops in Support
 
 ```{r, plot for generic ballot, echo=FALSE, message=FALSE, warning=FALSE}
 polls_df %>%
@@ -229,14 +216,20 @@ polls_df %>%
    geom_line(aes(group=candidate), size = 0.3) + geom_point(size = 0.3) +
      #scale_x_date(date_labels = "%m, %Y") +
    ylab("Generic Ballot Support") + xlab("Week") +
-      theme_light() +
-geom_segment(x=("31"), xend=("31"),y=0,yend=30, lty=2, color="black", alpha=0.3) + 
-  geom_segment(x=("33"), xend=("33"),y=0,yend=30, lty=2, color="black", alpha=0.3) + 
-annotate("text", x=("30"), y=27, label="Peak Inflation Coverage Window\n in NYT", size=4) 
+      theme_light() + geom_segment(x=("31"), xend=("31"),y=0,yend=32, lty=2, color="black", alpha=0.3) +
+      geom_segment(x=("33"), xend=("33"),y=0,yend=32, lty=2, color="black", alpha=0.3) + 
+      annotate("text", x=("30"), y=27, label="Peak Inflation Coverage Window\n in NYT", size=4) 
 
 ```
-##Inflation + Biden News Punishing the Republicans More?
 
-One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. Correlation does not equate to causation so there may be a possibility than other news coverage in these weeks impacted Americans' support of the parties. 
+Above is a graph that compares the peak weeks of coverage as evidenced in the plot above (Weeks 31-33) to the results of general ballot support pollings in the same time period. 
+
+## Inflation and Biden News Punishing the Republicans More? 
+
+An interesting observation of this graph in particular is how the dates line up perfectly with an overall drop in approval ratings for both Democrats and Republicans. However, the drop is much more significant for the non-incumbent party (Republicans) rather than President Biden's party. One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. This may be explained or investigated further by creating sentiment scores for how the coverage was portraying Biden's response as either positive, negative, or neutral. Furthermore, the last thing to consider is that correlation does not equate to causation so there may be a possibility than other (possibly more important or popular) news coverage that I didn't consider in these weeks impacted Americans' support of the parties. 
+
+
+
+
 
 
