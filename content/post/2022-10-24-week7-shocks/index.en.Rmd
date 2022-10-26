@@ -229,7 +229,17 @@ Above is a graph that compares the peak weeks of coverage as evidenced in the pl
 An interesting observation of this graph in particular is how the dates line up perfectly with an overall drop in approval ratings for both Democrats and Republicans. However, the drop is much more significant for the non-incumbent party (Republicans) rather than President Biden's party. One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. This may be explained or investigated further by creating sentiment scores for how the coverage was portraying Biden's response as either positive, negative, or neutral. Furthermore, the last thing to consider is that correlation does not equate to causation so there may be a possibility than other (possibly more important or popular) news coverage that I didn't consider in these weeks impacted Americans' support of the parties. 
 
 
+## My Existing Model and Predictions
+
+*Insert here brief summary and then a plot of existing model* 
 
 
+## Why I Am Not Including Shocks Into My Model...
+
+
+## Final Prediction for Week 7 
+
+
+## References 
 
 
