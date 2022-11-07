@@ -60,37 +60,40 @@ max_pages <- round((hits / 10) - 1)
 
 # # store all pages in list
 pages <- list()
+```
 
+```{r loading in data, include=FALSE}
 #  trying again - WORKS!!!
-Sys.sleep(1)
+Sys.sleep(2)
 sus0 <-jsonlite::fromJSON(paste0(complete_url, "&page=0"), flatten = TRUE)
 sus1 <- jsonlite::fromJSON(paste0(complete_url, "&page=1"), flatten = TRUE)
 sus2 <- jsonlite::fromJSON(paste0(complete_url, "&page=2"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus3 <- jsonlite::fromJSON(paste0(complete_url, "&page=3"), flatten = TRUE)
 sus4 <- jsonlite::fromJSON(paste0(complete_url, "&page=4"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus5 <- jsonlite::fromJSON(paste0(complete_url, "&page=5"), flatten = TRUE)
 sus6 <- jsonlite::fromJSON(paste0(complete_url, "&page=6"), flatten = TRUE)
 sus7 <- jsonlite::fromJSON(paste0(complete_url, "&page=7"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus8 <- jsonlite::fromJSON(paste0(complete_url, "&page=8"), flatten = TRUE)
 sus9 <- jsonlite::fromJSON(paste0(complete_url, "&page=9"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus10 <- jsonlite::fromJSON(paste0(complete_url, "&page=10"), flatten = TRUE)
-Sys.sleep(15)
+Sys.sleep(13)
 sus11 <- jsonlite::fromJSON(paste0(complete_url, "&page=11"), flatten = TRUE)
 sus12 <- jsonlite::fromJSON(paste0(complete_url, "&page=12"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus13 <- jsonlite::fromJSON(paste0(complete_url, "&page=13"), flatten = TRUE)
 sus14 <- jsonlite::fromJSON(paste0(complete_url, "&page=14"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus15 <- jsonlite::fromJSON(paste0(complete_url, "&page=15"), flatten = TRUE)
 Sys.sleep(5)
 
+```
 
 
-
+```{r , include=FALSE}
 NYTSearch <- rbind_pages(list(sus0$response$docs, sus1$response$docs, sus2$response$docs,sus3$response$docs, sus4$response$docs, sus5$response$docs, sus6$response$docs, sus7$response$docs, sus8$response$docs, sus9$response$docs,sus10$response$docs, sus11$response$docs, sus12$response$docs, sus13$response$docs, sus14$response$docs, sus15$response$docs ))
 
 
@@ -241,7 +244,6 @@ Therefore, this week I am choosing to keep my model intact with some minor adjus
 
 ```{r w7 setup, include = FALSE}
 #Vote and seat share data from prev environments
-
 voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
 
 house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
@@ -261,8 +263,7 @@ unemployment_national_quarterly_final <- read.csv("~/Desktop/Gov1347 Data/Gov134
 popvote_df <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
 
 #state unemployment data
-unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv")
-
+unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv") 
 
 #DATA FROM FEC.gov
 spending_bydistrict_2018 <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/ElectionBlog/2018_spending_by_district.csv")
@@ -322,7 +323,6 @@ filter(!is.na(DemCandidate), !is.na(RepCandidate)) %>%
 mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
 RepVotesMajorPct = RepVotesMajorPercent/100)
 
-
 ```
 
 ```{r map data setup, include=FALSE}
@@ -339,13 +339,13 @@ fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "
 st_read(fpath)
 }
 
-# load 114th congress
+# load 114th congress 
 
 cd114 <- get_congress_map(114)
 
 cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
 
-cd114 <- cd114 %>% left_join(house_party_vote_share_by_district, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+cd114 <- cd114 %>% inner_join(house_party_vote_share_by_district, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
 
 
 #cd114 <- cd114 %>% inner_join(local_model_data, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
@@ -389,6 +389,7 @@ turnout_gen$prediction22 <- turnoutpred$`predict(turnout, new_data = turnoutpred
 
 
 #add margin column
+options(scipen=999)
 turnout_gen <- turnout_gen %>%
 mutate(margin = turnout - prediction22)
 
@@ -443,8 +444,8 @@ unemployment_local <- rename(unemployment_local, State = 'State.and.area')
 
 #Include District Level Polling Data (if possible)
 #Using 2018 polling data to model our predictions
-local_model_data_w6 <- house_vote_share_by_district_2018 %>%
-inner_join(unemployment_local, by =  "State")
+local_model_data_w7 <- house_vote_share_by_district_2018 %>%
+left_join(unemployment_local, by =  "State")
 
 
 #Append the D and R Seats and national data to our local model for comparison in 2018.
@@ -452,7 +453,7 @@ inner_join(unemployment_local, by =  "State")
 natl_data_2018 <- economy_model_data %>%
 select(year, R_seats, D_seats, R_majorvote_pct, D_majorvote_pct)
 
-local_model_data_w6 <- local_model_data_w6 %>%
+local_model_data_w7 <- local_model_data_w7 %>%
 inner_join(natl_data_2018, by = c("Year" = "year"))
 
 #Include District Incumbent Data
@@ -463,11 +464,11 @@ select(year, state, winner_party, district_id, winner_candidate_inc)
 incumbentslist <- incumbentslist %>%
 filter(year == 2018)
 
-local_model_data_w6 <- local_model_data_w6 %>%
+local_model_data_w7 <- local_model_data_w7 %>%
 inner_join(incumbentslist, by = c("State" = "state","district_id" = "district_id"))
 
-local_model_data_w6 <- local_model_data_w6 %>%
-inner_join(ratings_share_2018, by = "CD")
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(ratings_share_2018, by = "CD")
 
 
 ## Ad spend
@@ -482,62 +483,103 @@ select(State, District, Candidate, Incumbent..Challenger.Open, Receipts)
 
 #Need to add winning candidate name i think
 
-local_model_data_w6 <- local_model_data_w6 %>%
-mutate(winner_candidate = case_when( WinnerParty == "R" ~ local_model_data_w6$RepCandidate, WinnerParty == "D" ~ local_model_data_w6$DemCandidate))
+local_model_data_w7 <- local_model_data_w7 %>%
+mutate(winner_candidate = case_when( WinnerParty == "R" ~ local_model_data_w7$RepCandidate, WinnerParty == "D" ~ local_model_data_w7$DemCandidate))
 
 
-local_model_data_w6 <- local_model_data_w6 %>%
-inner_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="District","winner_candidate_inc" = "Incumbent..Challenger.Open"))
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="District","winner_candidate_inc" = "Incumbent..Challenger.Open"))
 
 
-local_model_data_w6$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w6$Receipts))
+local_model_data_w7$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w7$Receipts))
 
 ```
 
 ```{r}
 #Take prediction for 2022 turnout and add to my existing model
-w6_df <- data.frame()
+w7_df <- data.frame()
 
-w6_df <-districts_simp %>%
-left_join(local_model_data_w6, by = "district_id", "CD")
+w7_df <-districts_simp %>%
+left_join(local_model_data_w7, by = "CD", "district_id")
 
 # drop na
-w6_cleaned <- w6_df %>%
+w7_cleaned <- w7_df %>%
 filter(!is.na(avg_margin))
 
 #replace missing polling values with toss up rating
-w6_df$avg <- w6_df$avg %>%
+w7_df$avg <- w7_df$avg %>%
 replace_na(4.7)
 
-w6_df$Unemployed_prct <- w6_df$Unemployed_prct %>%
+w7_df$Unemployed_prct <- w7_df$Unemployed_prct %>%
 replace_na(3.6)
 
-w6_df$Receipts <- w6_df$Receipts %>%
+w7_df$Receipts <- w7_df$Receipts %>%
 replace_na(960454)
 
-#Simplify shapefile
-w6_df <- rmapshaper::ms_simplify(w6_df, keep = 0.01)
 ```
 
-```{r w7 prediction}
-w7_local_model <- glm(DemVotesMajorPercent.x ~ Unemployed_prct + winner_candidate_inc.x + Receipts + turnout + avg, data = w6_df)
+```{r, include=FALSE}
+#Simplify shapefile
+w7_df <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
+w7_cleaned <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
+```
+
+```{r w7 prediction, echo=FALSE}
+w7_local_model <- glm(DemVotesMajorPercent.x ~ avg + Unemployed_prct + winner_candidate_inc.x + Receipts + turnout, data = w7_df)
 
 summ(w7_local_model)
 
 # add in Dem Vote prediction to w6_df and then filter for 2018, then append column to districts simp to plot
-w6_df$DemVotePred22 <- predict(w6_local_model)
+w7_df$DemVotePred22 <- predict(w7_local_model)
 
-w7_simple <- w6_df %>%
+w7_simple <- w7_df %>%
 select(State, Year, Month, cd, R_majorvote_pct, D_majorvote_pct, turnout, prediction22, DemVotesMajorPercent, DemVotePred22) %>%
 filter(Year == 2018)
 
 confint.default(w7_local_model)
-
 ```
-
-
 ## Final Prediction for Week 7 
 
+
+My final prediction for Week 7 is that
+
+```{r plot for w7 prediction, echo=FALSE}
+
+w7_plot <- ggplot() +
+geom_sf(data= w7_df, aes(fill= DemVotePred22), color = "grey60", size = 0.05) +
+scale_fill_gradient2(low = "red",
+mid = "white",
+high = "blue",
+midpoint = 50,
+name = "Dem Vote Pct") +
+coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE)  +
+theme(axis.title.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.x=element_blank(),
+axis.title.y=element_blank(),
+axis.text.y=element_blank(),
+axis.ticks.y=element_blank(),
+plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+labs(fill = "DemMajorVotePct Prediction", title = "Week 7 Model Prediction\n DemMajorVotePct per District")
+
+ggplotly(w7_plot)
+```
+
+```{r, prediction}
+districts22 <- w7_df %>% group_by(CD) %>% filter(row_number() == 1)
+
+summary(districts22$DemVotePred22 >= 50)
+
+```
+# Final Thoughts and Predictions #
+
+My final prediction for week 7 is the following:
+
+- **Mean of my Model's Democratic Major Vote Percent: 52.1%**
+
+- **Model Prediction for Democratic Seats: 226 **
+
+- **Model Prediction for Republican Seats: 209 **
 
 ## References 
 
