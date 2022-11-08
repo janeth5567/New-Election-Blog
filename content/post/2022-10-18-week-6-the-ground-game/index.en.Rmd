@@ -29,8 +29,7 @@ library(htmlwidgets)
 library(reactable)
 library(sqldf)
 library(blogdown)
-require(knitr) # required for knitting from rmd to md
-require(markdown) # required for md to html 
+
 
 #Vote and seat share data from prev environments
 
@@ -471,10 +470,9 @@ ggplotly(w6_plot)
 
 #try to filter so that only one district from each state shows up 
 
-districts22 <- w6_df %>% group_by(CD.x) %>% filter(row_number() == 1)
+#districts22 <- w6_df %>% group_by(CD.x) %>% filter(row_number() == 1)
 
 #summary(districts22$DemVotePred22 >= 50)
-
 ```
 
 

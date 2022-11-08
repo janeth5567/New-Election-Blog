@@ -9,3 +9,30 @@ type: ''
 subtitle: ''
 image: ''
 ---
+
+# Final Prediction and Thoughts # 
+
+
+This semester, we were tasked with coming up with a model to predict the individual outcomes of the 2022 midterm election. 
+
+Each week, we were tasked with going through scholar literature surrounding elections and make conscious decisions on whether or not to add variables into our model and how we chose to use data presented to us to make individual district predictions or national predictions. 
+
+Over the course of creating and refining my model, I was shocked at what variables seemed to affect my predictions the most in terms of R-Squared. A surprising finding was that my model was especially weak without the variables of ratings. This indicates that there is true value in the predictive power of election rating systems used by companies like 538. I was hesitate to include these at the beginning since the ratings themselves are consisted of many fundamental variables and are prediction in themselves. However, I don't want to shy away from the revelation that the most important prediction for who will win an election is probably a combination of expert predictions for those districts. This method has its obvious downsides as we saw in the 2020 election, however, historically the power of these expert predictions outweigh the limitations. 
+
+In my final model prediction the following were the results of the district level regressions: 
+
+- **Mean of my Model's Democratic Major Vote Percent: 52.1%**
+
+- **Model Prediction for Democratic Seats: 226 **
+
+- **Model Prediction for Republican Seats: 209 **
+
+Though my model is predicting a definitive Democratic win, I believe the actual results will be much closer in line with a Republican majority. I believe a more accurate prediction that takes into account the overpredictiveness / over confidence my model has for democrats would look more like:
+**Model Prediction for Democratic Seats: 216 **
+
+- **Model Prediction for Republican Seats: 219 **
+
+
+
+
+

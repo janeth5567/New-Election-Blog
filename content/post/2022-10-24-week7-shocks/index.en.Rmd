@@ -285,15 +285,16 @@ ratings_share_2018 <-read.csv("~/Desktop/2018_ratings.csv")
 
 #Incumbent list
 incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+```
 
+
+```{r w7 setup, include = FALSE}
 # GROUND GAME LAB SECTION NOTES ##
-
 dist_pv_df <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
 # read in cvap
 cvap_district <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
 # mutate geoid for merging
-cvap_district <- cvap_district %>%
-rename(st_cd_fips = geoid)
+cvap_district <- cvap_district %>% dplyr::rename(st_cd_fips = geoid)
 
 # select relevant years from voting data
 table(dist_pv_df$year)
@@ -360,16 +361,28 @@ districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
 
 # read in cvap
 turnout_gen <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
+
 # mutate geo id for merging
+
 turnout_gen <- turnout_gen %>%
 rename(st_cd_fips = geoid)
 
 turnout_gen <- incumbentslist %>%
 inner_join(cvap_district, by = c('st_cd_fips', 'year'))
 
+#Include District Incumbent Data
+
+incumbentslist <- incumbentslist %>%
+select(year, state, winner_party, district_id, winner_candidate_inc)
+
+#incumbentslist <- incumbentslist %>%
+#filter(year == 2018)
+
+
 turnout_gen <- turnout_gen %>%
 mutate(totalvotes = RepVotes + DemVotes,
 turnout = totalvotes/cvap)
+
 # Filter out for only midterm years and non-presidential bc I think that might have an influence / skew data to more turnout than we should expect empirically.
 turnout_gen <- turnout_gen %>%
 filter(year == 2012 | year == 2014 | year == 2018)
@@ -456,13 +469,6 @@ select(year, R_seats, D_seats, R_majorvote_pct, D_majorvote_pct)
 local_model_data_w7 <- local_model_data_w7 %>%
 inner_join(natl_data_2018, by = c("Year" = "year"))
 
-#Include District Incumbent Data
-
-incumbentslist <- incumbentslist %>%
-select(year, state, winner_party, district_id, winner_candidate_inc)
-
-incumbentslist <- incumbentslist %>%
-filter(year == 2018)
 
 local_model_data_w7 <- local_model_data_w7 %>%
 inner_join(incumbentslist, by = c("State" = "state","district_id" = "district_id"))
