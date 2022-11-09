@@ -1,5 +1,5 @@
 ---
-title: "Do Scandals and Shocks Affect Elections?"
+title: "Week 7: Do Scandals and Shocks Affect Elections?"
 author: "Janet Hernandez"
 date: "2022-10-24"
 slug: "week7-shocks"
@@ -11,7 +11,7 @@ This week, I will be doing the first blog extension. I will be replicating the D
 
 I will also try to modify and revise my existing predictive model from week 6. 
 
-```{r setup, include=FALSE}
+```{r , include=FALSE}
 library(dotenv)
 library(jsonlite)
 library(tidyverse)
@@ -60,37 +60,40 @@ max_pages <- round((hits / 10) - 1)
 
 # # store all pages in list
 pages <- list()
+```
 
+```{r loading in data, include=FALSE}
 #  trying again - WORKS!!!
-Sys.sleep(1)
+Sys.sleep(2)
 sus0 <-jsonlite::fromJSON(paste0(complete_url, "&page=0"), flatten = TRUE)
 sus1 <- jsonlite::fromJSON(paste0(complete_url, "&page=1"), flatten = TRUE)
 sus2 <- jsonlite::fromJSON(paste0(complete_url, "&page=2"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus3 <- jsonlite::fromJSON(paste0(complete_url, "&page=3"), flatten = TRUE)
 sus4 <- jsonlite::fromJSON(paste0(complete_url, "&page=4"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus5 <- jsonlite::fromJSON(paste0(complete_url, "&page=5"), flatten = TRUE)
 sus6 <- jsonlite::fromJSON(paste0(complete_url, "&page=6"), flatten = TRUE)
 sus7 <- jsonlite::fromJSON(paste0(complete_url, "&page=7"), flatten = TRUE)
-Sys.sleep(16)
+Sys.sleep(17)
 sus8 <- jsonlite::fromJSON(paste0(complete_url, "&page=8"), flatten = TRUE)
 sus9 <- jsonlite::fromJSON(paste0(complete_url, "&page=9"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus10 <- jsonlite::fromJSON(paste0(complete_url, "&page=10"), flatten = TRUE)
-Sys.sleep(15)
+Sys.sleep(13)
 sus11 <- jsonlite::fromJSON(paste0(complete_url, "&page=11"), flatten = TRUE)
 sus12 <- jsonlite::fromJSON(paste0(complete_url, "&page=12"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus13 <- jsonlite::fromJSON(paste0(complete_url, "&page=13"), flatten = TRUE)
 sus14 <- jsonlite::fromJSON(paste0(complete_url, "&page=14"), flatten = TRUE)
-Sys.sleep(12)
+Sys.sleep(13)
 sus15 <- jsonlite::fromJSON(paste0(complete_url, "&page=15"), flatten = TRUE)
 Sys.sleep(5)
 
+```
 
 
-
+```{r , include=FALSE}
 NYTSearch <- rbind_pages(list(sus0$response$docs, sus1$response$docs, sus2$response$docs,sus3$response$docs, sus4$response$docs, sus5$response$docs, sus6$response$docs, sus7$response$docs, sus8$response$docs, sus9$response$docs,sus10$response$docs, sus11$response$docs, sus12$response$docs, sus13$response$docs, sus14$response$docs, sus15$response$docs ))
 
 
@@ -103,16 +106,7 @@ mydata <- readRDS("inflation_2022.RDS")
 ```
 
 ## Background Literature on Shocks and Elections 
-
-• Natural disaster: Shark attack (Achen and Bartels 2017), tornado
-(Healy and Malhotra 2010) ⇝ decreased support for incumbents
-• Sports (Healy, Mo, Malhotra 2010): college football team losing
-their game ⇝ decreased support for incumbents
-• Lottery (Bagues and Esteve-Volart 2016): Towns winning Spanish
-Christmas lottery ⇝ increased support for incumbents
-Global comparison (Powell & Whitten 1993): Punish only when
-the gov’t is doing worse than other gov’ts
-• Ex: the speed of recovery
+There is varying literature on the effects of shocks on elections. Achen and Bartels (2017) and Healy and Malhotra (2010) found that natural disasters such as shark attacks and tornados decreased support for incumbents. Further research in elections has also found some correlation to  college football team losing their game and a subsequent decreased support for incumbents (Healy, Mo, Malhotra 2010). However, it is important to note that most of these relationships are found to be relatively weak. For this reason, I am skeptical to heavily rely on shocks and scandals to inform my model.
 
 
 ```{r visualization, echo=FALSE}
@@ -228,18 +222,364 @@ Above is a graph that compares the peak weeks of coverage as evidenced in the pl
 
 An interesting observation of this graph in particular is how the dates line up perfectly with an overall drop in approval ratings for both Democrats and Republicans. However, the drop is much more significant for the non-incumbent party (Republicans) rather than President Biden's party. One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. This may be explained or investigated further by creating sentiment scores for how the coverage was portraying Biden's response as either positive, negative, or neutral. Furthermore, the last thing to consider is that correlation does not equate to causation so there may be a possibility than other (possibly more important or popular) news coverage that I didn't consider in these weeks impacted Americans' support of the parties. 
 
-
 ## My Existing Model and Predictions
 
-*Insert here brief summary and then a plot of existing model* 
-
+My current model uses several inputs including local level economic data such as state unemployment, inflationary levels that are standard across the states, incumbency status for each district, ad spend by candidate, and expert polling averages. 
 
 ## Why I Am Not Including Shocks Into My Model...
 
+This week, I am choosing to not include data on shocks. My reasoning for this is that firstly, I am unsure of how exactly to quantify shock value as a variable of input into my model. Secondly, I believe that generic ballot polling averages do just as good of a job as accounting for shocks. The result of change in popular support is what we are most interested in and that is already accounted for. 
 
+Therefore, this week I am choosing to keep my model intact with some minor adjustments to bettter improve predictive power such as including a confidence interval. 
+
+```{r w7 setup, include = FALSE}
+#Vote and seat share data from prev environments
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+## ECONOMIC DATA ##
+
+# Data on GDP/quarter
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+
+# Data on RDI/quarter
+RDI_quarterly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+
+# Data on unemployment
+unemployment_national_quarterly_final <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+
+# Data on vote/seat share
+popvote_df <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+
+#state unemployment data
+unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv") 
+
+#DATA FROM FEC.gov
+spending_bydistrict_2018 <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/ElectionBlog/2018_spending_by_district.csv")
+
+house_party_vote_share_by_district <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")%>%
+filter(raceYear == 2018) %>%
+select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+#Load data just for year 2018
+house_vote_share_by_district_2018 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
+filter(raceYear == 2018) %>%
+select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+# Change from at large states w only one district to a code-able suffix
+house_vote_share_by_district_2018$CD[grep(pattern = "-AL", x = house_vote_share_by_district_2018$CD)] <- c("AK-01","DE-01","MT-01","ND-01","SD-01", "VT-01","WY-01")
+
+#Cleaned 2018 data from Ethan
+ratings_share_2018 <-read.csv("~/Desktop/2018_ratings.csv")
+
+#Incumbent list
+incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+```
+
+
+```{r w7 turnout setup, include = FALSE}
+# GROUND GAME LAB SECTION NOTES ##
+dist_pv_df <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+# read in cvap
+cvap_district <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
+# mutate geoid for merging
+cvap_district <- cvap_district %>% dplyr::rename(st_cd_fips = geoid)
+
+# select relevant years from voting data
+table(dist_pv_df$year)
+# 2012 - from 2018
+# 2014, 2016, 2018, 2020 - from 2020
+dist_pv_df <- dist_pv_df %>%
+filter(year == 2012 | year == 2014 | year == 2018)
+table(dist_pv_df$st_cd_fips)
+
+# merge
+dist_pv_cvap <- dist_pv_df %>%
+inner_join(cvap_district, by = c('st_cd_fips', 'year', 'state'))
+
+# mutate turnout
+dist_pv_cvap <- dist_pv_cvap %>%
+mutate(totalvotes = RepVotes + DemVotes,
+turnout = totalvotes/cvap)
+
+# mutate votes percent for glm
+turnout_gen <- dist_pv_cvap %>%
+mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+RepVotesMajorPct = RepVotesMajorPercent/100)
+
+# drop uncontested seats
+dist_pv_cvap_closed <- dist_pv_cvap %>%
+filter(!is.na(DemCandidate), !is.na(RepCandidate)) %>%
+mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+RepVotesMajorPct = RepVotesMajorPercent/100)
+
+```
+
+```{r map data setup, include=FALSE}
+require(sf)
+
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+
+# load 114th congress 
+
+cd114 <- get_congress_map(114)
+
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+
+cd114 <- cd114 %>% inner_join(house_party_vote_share_by_district, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+
+#cd114 <- cd114 %>% inner_join(local_model_data, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+```
+
+```{r including turn out, include=FALSE}
+
+turnout <- glm(turnout ~ year + state + president_party + cvap + winner_candidate_inc, data = turnout_gen)
+
+summary(turnout)
+
+turnoutpred_2022 <- data.frame()
+
+turnoutpred <- as.data.frame(predict(turnout, new_data = turnoutpred_2022))
+
+turnout_gen$prediction22 <- turnoutpred$`predict(turnout, new_data = turnoutpred_2022)`
+
+#Added column for 2022 prediction now I can go ahead and map how well my model is prediction expected turnout v. actual turnout
+
+
+
+#add margin column
+options(scipen=999)
+
+turnout_gen <- turnout_gen %>%
+mutate(margin = turnout - prediction22)
+
+turnout_18 <- turnout_gen %>%
+filter(year == 2018)
+
+districts_simp1 <- districts_simp %>%
+select(STATENAME, ID, DISTRICT, STARTCONG, ENDCONG, FINALNOTE, district_id, CD, geometry)
+
+#turnout_18 <- districts_simp1 %>% 
+#left_join(turnout_18, by = 'district_id')
+```
+
+
+```{r local model data build, include=FALSE}
+economy_q4 <- economy %>%
+filter(quarter_yr == 4)
+
+RDI_q4 <- RDI_quarterly %>%
+filter(quarter_yr == 4)
+
+unemployment_q4 <- unemployment_national_quarterly_final %>%
+filter(quarter_yr == 4)
+
+economy_model_data <- popvote_df %>%
+inner_join(economy_q4, by = "year")
+
+economy_model_data <-economy_model_data %>%
+inner_join(RDI_q4, by = "year")
+
+#Include District Level Economy Data
+# Clean and update economy state level
+unemployment_local <- unemployment_state_monthly %>%
+filter(Year == 2018)
+
+unemployment_local <- unemployment_local %>%
+select('State.and.area', Year, Month, Unemployed_prct)
+
+# Clean and include local RDI data for just 2018 and then join to economy data
+RDI_local <- RDI_q4 %>%
+filter(year == 2018)
+
+# RDI and unemployment merged
+unemployment_local <- unemployment_local %>%
+inner_join(RDI_q4, by = c("Year" = "year"))
+
+# Include GDP here too
+economy_q4 <- economy_q4 %>%
+select(year, GDP_growth_qt, GDP_growth_pct)
+
+unemployment_local <- unemployment_local %>%
+inner_join(economy_q4, by = c("Year" = "year"))
+
+# Merge unemployment local to all state and district levels as equal. Merge by State.
+
+unemployment_local <- unemployment_local %>% 
+  dplyr::rename(State = State.and.area)
+
+
+#Include District Level Polling Data (if possible)
+#Using 2018 polling data to model our predictions
+local_model_data_w7 <- house_vote_share_by_district_2018 %>%
+inner_join(unemployment_local, by = 'State')
+
+local_model_data_w7 <- as.data.frame(local_model_data_w7)
+
+#local_model_data_w7 <- data_frame()
+
+#Append the D and R Seats and national data to our local model for comparison in 2018.
+
+natl_data_2018 <- economy_model_data %>%
+select(year, R_seats, D_seats, R_majorvote_pct, D_majorvote_pct)
+
+local_model_data_w7 <- local_model_data_w7 %>%
+inner_join(natl_data_2018, by = c("Year" = "year"))
+
+incumbentslist18 <- incumbentslist %>%
+  filter(year == 2018)
+
+## Add expert ratings
+local_model_data_w7 <- local_model_data_w7 %>%
+inner_join(ratings_share_2018, by = "CD")
+
+
+## Ad spend
+
+#Adding ad spending variable to our model
+
+#Clean up ad data and add to local model then run lm
+
+spending_bydistrict_2018 <- spending_bydistrict_2018 %>%
+select(State, District, Candidate, Incumbent..Challenger.Open, Receipts)
+
+
+#Need to add winning candidate name i think
+
+#Only add relavent variables for incumbency
+incumbentslist18 <- incumbentslist18 %>% 
+  select(state, district_id, winner_candidate_inc)
+
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(incumbentslist18, by = c("State" = "state","district_id" = "district_id"))
+
+local_model_data_w7 <- local_model_data_w7 %>%
+mutate(winner_candidate = case_when(WinnerParty == "R" ~ local_model_data_w7$RepCandidate, WinnerParty == "D" ~ local_model_data_w7$DemCandidate))
+
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="District","winner_candidate_inc" = "Incumbent..Challenger.Open"))
+
+#Include voting data to merge local model data and cvap information
+
+turnoutformerge <- turnout_gen %>% 
+  select(state, year, district_num, district_id, st_cd_fips, cvap, turnout)
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(turnoutformerge, by = c('State' = 'state', 'district_id' = 'district_id', 'raceYear' = 'year'))
+
+local_model_data_w7$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w7$Receipts))
+
+```
+
+
+```{r, include=FALSE}
+#Take prediction for 2022 turnout and add to my existing model
+w7_df <- data.frame()
+
+#join districts and data
+w7_df <-districts_simp1 %>%
+left_join(local_model_data_w7, by = "district_id", "CD")
+
+#replace missing polling values with toss up rating
+w7_df$avg <- w7_df$avg %>%
+replace_na(4.7)
+
+w7_df$Unemployed_prct <- w7_df$Unemployed_prct %>%
+replace_na(3.6)
+
+w7_df$Receipts <- w7_df$Receipts %>%
+replace_na(960454)
+
+w7_df$turnout <- w7_df$turnout %>% 
+  replace_na(0.515)
+
+
+```
+
+```{r, include=FALSE}
+#Simplify shapefile
+w7_df <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
+
+```
+
+*Below are my confidence intervals for my prediction*
+```{r w7 prediction, echo=FALSE}
+w7_local_model <- glm(DemVotesMajorPercent ~ avg + Unemployed_prct + winner_candidate_inc + Receipts + turnout, data = w7_df)
+
+summ(w7_local_model)
+
+# add in Dem Vote prediction to w6_df and then filter for 2018, then append column to districts simp to plot
+w7_df$DemVotePred22 <- predict(w7_local_model)
+
+
+confint.default(w7_local_model)
+```
 ## Final Prediction for Week 7 
 
 
+My final prediction for Week 7 is below
+
+```{r plot for w7 prediction, echo=FALSE}
+
+w7_plot <- ggplot() +
+geom_sf(data= w7_df, aes(fill= DemVotePred22), color = "grey60", size = 0.05) +
+scale_fill_gradient2(low = "red",
+mid = "white",
+high = "blue",
+midpoint = 50,
+name = "Dem Vote Pct") +
+coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE)  +
+theme(axis.title.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.x=element_blank(),
+axis.title.y=element_blank(),
+axis.text.y=element_blank(),
+axis.ticks.y=element_blank(),
+plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+labs(fill = "DemMajorVotePct Prediction", title = "Week 7 Model Prediction\n DemMajorVotePct per District")
+
+ggplotly(w7_plot)
+
+```
+
+```{r, prediction, include=FALSE}
+districts22 <- w7_df %>% group_by(district_id) %>% filter(row_number() == 1)
+
+summary(districts22$DemVotePred22 >= 50)
+
+```
+# Final Thoughts and Predictions #
+
+My final prediction for week 7 is the following:
+
+- **Mean of my Model's Democratic Major Vote Percent: 52.1%**
+
+- **Model Prediction for Democratic Seats: 226 **
+
+- **Model Prediction for Republican Seats: 209 **
+
 ## References 
 
+Christopher H Achen and Larry M Bartels. Democracy for Realists: Why Elections Do Not Produce Responsive Government, volume 4. Princeton University Press, 2017. URL https://hollis.harvard.edu/primo-explore/fulldisplay?docid=TN_ cdi_askewsholts_vlebooks_9781400888740&context=PC&vid=HVD2&search_scope= DRAFT: everything&tab=everything&lang=en_US.
+
+Marco Mendoza Avin ̃a and Semra Sevi. Did exposure to COVID-19 affect vote choice in the 2020 presidential election? Research & Politics, 8(3): 205316802110415, July 2021. ISSN 2053-1680, 2053-1680. doi: 10.1177/ 20531680211041505. URL https://hollis.harvard.edu/permalink/f/1mdq5o5/TN_cdi_doaj_primary_oai_doaj_org_article_f43f65041eb14d4f839740deb9063b43.
+
+Andrew Healy, Neil Malhotra, et al. Random events, economic losses, and retrospective voting: Implications for democratic competence. Quarterly Journal of Political Science, 5 (2):193–208, 2010. URL https://hollis.harvard.edu/primo-explore/fulldisplaydocid=TN_cdi_crossref_primary_10_1561_100_00009057&context=PC&vid=HVD2&search_scope=everything&tab=everything&lang=en_US
+
+Anthony Fowler and Andrew B Hall. Do Shark Attacks Influence Presidential Elections? Reassessing a Prominent Finding on Voter Competence. The Journal of politics, 80(4): 1423–1437, 2018. ISSN 1468-2508. URL https://hollis.harvard.edu/primo-explore/9fulldisplaydocid=TN_cdi_crossref_primary_10_1086_699244&context=PC&vid=HVD2&search_scope=everything&tab=everything&lang=en_US 
 

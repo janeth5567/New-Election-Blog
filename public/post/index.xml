@@ -7,9 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
     <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
-    <lastBuildDate>Mon, 24 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 07 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Do Scandals and Shocks Affect Elections?</title>
+      <title>Final Predictive Model</title>
+      <link>https://username.github.io/post/2022-11-07-final-predictive-model/</link>
+      <pubDate>Mon, 07 Nov 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-11-07-final-predictive-model/</guid>
+      <description>Final Prediction and Thoughts This semester, we were tasked with coming up with a model to predict the individual outcomes of the 2022 midterm election.
+Each week, we were tasked with going through scholar literature surrounding elections and make conscious decisions on whether or not to add variables into our model and how we chose to use data presented to us to make individual district predictions or national predictions.</description>
+    </item>
+    
+    <item>
+      <title>Week 7: Do Scandals and Shocks Affect Elections?</title>
       <link>https://username.github.io/post/week7-shocks/</link>
       <pubDate>Mon, 24 Oct 2022 00:00:00 +0000</pubDate>
       <author>youremail@domain.com (Janet Hernandez)</author>
