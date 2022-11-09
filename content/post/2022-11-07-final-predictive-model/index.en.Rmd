@@ -28,6 +28,7 @@ In my final model prediction the following were the results of the district leve
 - **Model Prediction for Republican Seats: 209 **
 
 Though my model is predicting a definitive Democratic win, I believe the actual results will be much closer in line with a Republican majority. I believe a more accurate prediction that takes into account the overpredictiveness / over confidence my model has for democrats would look more like:
+
 - **Model Prediction for Democratic Seats: 216 **
 
 - **Model Prediction for Republican Seats: 219 **
