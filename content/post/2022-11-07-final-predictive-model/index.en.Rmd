@@ -50,6 +50,22 @@ As I said before, I think my model is pretty basic but effective. I think resear
 The only variable I chose to weigh was the days until election for expert predictions. I found that the closer to an election, the more accurate the predictions will be. 
 
 ```{r w7 setup, include = FALSE}
+library(dotenv)
+library(jsonlite)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(scales)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+library(sqldf)
+library(blogdown)
+library(ggthemes)
+library(plyr)
+
 #Vote and seat share data from prev environments
 voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
 

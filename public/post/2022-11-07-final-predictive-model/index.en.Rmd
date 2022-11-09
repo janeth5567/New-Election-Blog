@@ -27,13 +27,377 @@ In my final model prediction the following were the results of the district leve
 
 - **Model Prediction for Republican Seats: 209 **
 
-Though my model is predicting a definitive Democratic win, I believe the actual results will be much closer in line with a Republican majority. I believe a more accurate prediction that takes into account the overpredictiveness / over confidence my model has for democrats would look more like:
+Though my model is predicting a definitive Democratic win, I believe the actual results will be much closer in line with a Republican majority. I believe a more accurate prediction that takes into account the over predictiveness / over confidence my model has for democrats would look more like:
+
 
 - **Model Prediction for Democratic Seats: 216 **
 
 - **Model Prediction for Republican Seats: 219 **
 
+# Model Overview # 
 
+(1) model formula (or procedure for obtaining prediction)
+
+My model took in inputs of average expert ratings (weighted by date of prediction), the unemployment rate of the state, the incumbency status of the democrat running (challenger or incumbent), the money spent by the campaign on ad spend, as well as historical turnout for the district and a prediction of the 2022 turnout. 
+
+
+(2) model description and justification, 
+
+As I said before, I think my model is pretty basic but effective. I think research and presentations over the course of the class have shown the predictive power of expert ratings due to their extensive consideration of weighted foundation variables. 
+
+(3) coefficients (if using regression) and/or weights (if using ensemble), 
+
+The only variable I chose to weigh was the days until election for expert predictions. I found that the closer to an election, the more accurate the predictions will be. 
+
+```{r w7 setup, include = FALSE}
+library(dotenv)
+library(jsonlite)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(scales)
+library(rjson)
+library(jtools)
+library(htmlwidgets)
+library(reactable)
+library(sqldf)
+library(blogdown)
+library(ggthemes)
+library(plyr)
+
+#Vote and seat share data from prev environments
+voteseatshare_2020 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house nationwide vote and seat share by party 1948-2020.csv")
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")
+
+## ECONOMIC DATA ##
+
+# Data on GDP/quarter
+economy <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/GDP_quarterly.csv")
+
+# Data on RDI/quarter
+RDI_quarterly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/RDI_quarterly.csv")
+
+# Data on unemployment
+unemployment_national_quarterly_final <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_national_quarterly_final.csv")
+
+# Data on vote/seat share
+popvote_df <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/house_popvote_seats.csv")
+
+#state unemployment data
+unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/Section data 2/unemployment_state_monthly.csv") 
+
+#DATA FROM FEC.gov
+spending_bydistrict_2018 <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/ElectionBlog/2018_spending_by_district.csv")
+
+house_party_vote_share_by_district <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")%>%
+filter(raceYear == 2018) %>%
+select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+#Load data just for year 2018
+house_vote_share_by_district_2018 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
+filter(raceYear == 2018) %>%
+select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
+
+# Change from at large states w only one district to a code-able suffix
+house_vote_share_by_district_2018$CD[grep(pattern = "-AL", x = house_vote_share_by_district_2018$CD)] <- c("AK-01","DE-01","MT-01","ND-01","SD-01", "VT-01","WY-01")
+
+#Cleaned 2018 data from Ethan
+ratings_share_2018 <-read.csv("~/Desktop/2018_ratings.csv")
+
+#Incumbent list
+incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+```
+
+
+```{r w7 turnout setup, include = FALSE}
+# GROUND GAME LAB SECTION NOTES ##
+dist_pv_df <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
+# read in cvap
+cvap_district <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
+# mutate geoid for merging
+cvap_district <- cvap_district %>% dplyr::rename(st_cd_fips = geoid)
+
+# select relevant years from voting data
+table(dist_pv_df$year)
+# 2012 - from 2018
+# 2014, 2016, 2018, 2020 - from 2020
+dist_pv_df <- dist_pv_df %>%
+filter(year == 2012 | year == 2014 | year == 2018)
+table(dist_pv_df$st_cd_fips)
+
+# merge
+dist_pv_cvap <- dist_pv_df %>%
+inner_join(cvap_district, by = c('st_cd_fips', 'year', 'state'))
+
+# mutate turnout
+dist_pv_cvap <- dist_pv_cvap %>%
+mutate(totalvotes = RepVotes + DemVotes,
+turnout = totalvotes/cvap)
+
+# mutate votes percent for glm
+turnout_gen <- dist_pv_cvap %>%
+mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+RepVotesMajorPct = RepVotesMajorPercent/100)
+
+# drop uncontested seats
+dist_pv_cvap_closed <- dist_pv_cvap %>%
+filter(!is.na(DemCandidate), !is.na(RepCandidate)) %>%
+mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
+RepVotesMajorPct = RepVotesMajorPercent/100)
+
+```
+
+```{r map data setup, include=FALSE}
+require(sf)
+
+# load geographic data
+get_congress_map <- function(cong=114) {
+tmp_file <- tempfile()
+tmp_dir <- tempdir()
+zp <- sprintf("https://cdmaps.polisci.ucla.edu/shp/districts114.zip",cong)
+download.file(zp, tmp_file)
+unzip(zipfile = tmp_file, exdir = tmp_dir)
+fpath <- paste(tmp_dir, sprintf("districtShapes/districts114.shp",cong), sep = "/")
+st_read(fpath)
+}
+
+# load 114th congress 
+
+cd114 <- get_congress_map(114)
+
+cd114$DISTRICT <- as.numeric(cd114$DISTRICT)
+
+cd114 <- cd114 %>% inner_join(house_party_vote_share_by_district, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+
+#cd114 <- cd114 %>% inner_join(local_model_data, by= c("STATENAME"= "State", "DISTRICT" = "district_num"))
+
+districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
+```
+
+```{r including turn out, include=FALSE}
+
+turnout <- glm(turnout ~ year + state + president_party + cvap + winner_candidate_inc, data = turnout_gen)
+
+summary(turnout)
+
+turnoutpred_2022 <- data.frame()
+
+turnoutpred <- as.data.frame(predict(turnout, new_data = turnoutpred_2022))
+
+turnout_gen$prediction22 <- turnoutpred$`predict(turnout, new_data = turnoutpred_2022)`
+
+#Added column for 2022 prediction now I can go ahead and map how well my model is prediction expected turnout v. actual turnout
+
+
+
+#add margin column
+options(scipen=999)
+
+turnout_gen <- turnout_gen %>%
+mutate(margin = turnout - prediction22)
+
+turnout_18 <- turnout_gen %>%
+filter(year == 2018)
+
+districts_simp1 <- districts_simp %>%
+select(STATENAME, ID, DISTRICT, STARTCONG, ENDCONG, FINALNOTE, district_id, CD, geometry)
+
+#turnout_18 <- districts_simp1 %>% 
+#left_join(turnout_18, by = 'district_id')
+```
+
+
+```{r local model data build, include=FALSE}
+economy_q4 <- economy %>%
+filter(quarter_yr == 4)
+
+RDI_q4 <- RDI_quarterly %>%
+filter(quarter_yr == 4)
+
+unemployment_q4 <- unemployment_national_quarterly_final %>%
+filter(quarter_yr == 4)
+
+economy_model_data <- popvote_df %>%
+inner_join(economy_q4, by = "year")
+
+economy_model_data <-economy_model_data %>%
+inner_join(RDI_q4, by = "year")
+
+#Include District Level Economy Data
+# Clean and update economy state level
+unemployment_local <- unemployment_state_monthly %>%
+filter(Year == 2018)
+
+unemployment_local <- unemployment_local %>%
+select('State.and.area', Year, Month, Unemployed_prct)
+
+# Clean and include local RDI data for just 2018 and then join to economy data
+RDI_local <- RDI_q4 %>%
+filter(year == 2018)
+
+# RDI and unemployment merged
+unemployment_local <- unemployment_local %>%
+inner_join(RDI_q4, by = c("Year" = "year"))
+
+# Include GDP here too
+economy_q4 <- economy_q4 %>%
+select(year, GDP_growth_qt, GDP_growth_pct)
+
+unemployment_local <- unemployment_local %>%
+inner_join(economy_q4, by = c("Year" = "year"))
+
+# Merge unemployment local to all state and district levels as equal. Merge by State.
+
+unemployment_local <- unemployment_local %>% 
+  dplyr::rename(State = State.and.area)
+
+
+#Include District Level Polling Data (if possible)
+#Using 2018 polling data to model our predictions
+local_model_data_w7 <- house_vote_share_by_district_2018 %>%
+inner_join(unemployment_local, by = 'State')
+
+local_model_data_w7 <- as.data.frame(local_model_data_w7)
+
+#local_model_data_w7 <- data_frame()
+
+#Append the D and R Seats and national data to our local model for comparison in 2018.
+
+natl_data_2018 <- economy_model_data %>%
+select(year, R_seats, D_seats, R_majorvote_pct, D_majorvote_pct)
+
+local_model_data_w7 <- local_model_data_w7 %>%
+inner_join(natl_data_2018, by = c("Year" = "year"))
+
+incumbentslist18 <- incumbentslist %>%
+  filter(year == 2018)
+
+## Add expert ratings
+local_model_data_w7 <- local_model_data_w7 %>%
+inner_join(ratings_share_2018, by = "CD")
+
+
+## Ad spend
+
+#Adding ad spending variable to our model
+
+#Clean up ad data and add to local model then run lm
+
+spending_bydistrict_2018 <- spending_bydistrict_2018 %>%
+select(State, District, Candidate, Incumbent..Challenger.Open, Receipts)
+
+
+#Need to add winning candidate name i think
+
+#Only add relavent variables for incumbency
+incumbentslist18 <- incumbentslist18 %>% 
+  select(state, district_id, winner_candidate_inc)
+
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(incumbentslist18, by = c("State" = "state","district_id" = "district_id"))
+
+local_model_data_w7 <- local_model_data_w7 %>%
+mutate(winner_candidate = case_when(WinnerParty == "R" ~ local_model_data_w7$RepCandidate, WinnerParty == "D" ~ local_model_data_w7$DemCandidate))
+
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="District","winner_candidate_inc" = "Incumbent..Challenger.Open"))
+
+#Include voting data to merge local model data and cvap information
+
+turnoutformerge <- turnout_gen %>% 
+  select(state, year, district_num, district_id, st_cd_fips, cvap, turnout)
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(turnoutformerge, by = c('State' = 'state', 'district_id' = 'district_id', 'raceYear' = 'year'))
+
+local_model_data_w7$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w7$Receipts))
+
+```
+
+
+
+(4) uncertainty around prediction (e.g. predictive interval)
+
+I have included my confidence intervals below for my model. 
+
+
+```{r, include=FALSE}
+#Take prediction for 2022 turnout and add to my existing model
+final_df <- data.frame()
+
+#join districts and data
+final_df <-districts_simp1 %>%
+left_join(local_model_data_w7, by = "district_id", "CD")
+
+#replace missing polling values with toss up rating
+final_df$avg <- final_df$avg %>%
+replace_na(4.7)
+
+final_df$Unemployed_prct <- final_df$Unemployed_prct %>%
+replace_na(3.6)
+
+final_df$Receipts <- final_df$Receipts %>%
+replace_na(960454)
+
+final_df$turnout <- final_df$turnout %>% 
+  replace_na(0.545)
+
+
+```
+
+```{r, include=FALSE}
+#Simplify shapefile
+final_df <- rmapshaper::ms_simplify(final_df, keep = 0.01)
+
+```
+
+*Below are my confidence intervals for my prediction*
+```{r w7 prediction, echo=FALSE}
+w7_local_model <- glm(DemVotesMajorPercent ~ avg + Unemployed_prct + winner_candidate_inc + Receipts + turnout, data = final_df)
+
+summ(w7_local_model)
+
+# add in Dem Vote prediction to w6_df and then filter for 2018, then append column to districts simp to plot
+final_df$DemVotePred22 <- predict(w7_local_model)
+
+
+confint.default(w7_local_model)
+```
+
+
+
+## Final Prediction for Week 7 
+
+
+My final prediction for the US is below
+
+```{r plot for w7 prediction, echo=FALSE}
+
+final_plot <- ggplot() +
+geom_sf(data= final_df, aes(fill= DemVotePred22), color = "grey60", size = 0.05) +
+scale_fill_gradient2(low = "red",
+mid = "white",
+high = "blue",
+midpoint = 50,
+name = "Dem Vote Pct") +
+coord_sf(xlim = c(-124.43, -66.57), ylim = c(23, 52), expand = FALSE)  +
+theme(axis.title.x=element_blank(),
+axis.text.x=element_blank(),
+axis.ticks.x=element_blank(),
+axis.title.y=element_blank(),
+axis.text.y=element_blank(),
+axis.ticks.y=element_blank(),
+plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
+labs(fill = "DemMajorVotePct Prediction", title = "Final Model Prediction\n DemMajorVotePct per District")
+
+ggplotly(final_plot)
+
+```
 
 
 
