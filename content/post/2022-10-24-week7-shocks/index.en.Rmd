@@ -1,5 +1,5 @@
 ---
-title: "Do Scandals and Shocks Affect Elections?"
+title: "Week 7: Do Scandals and Shocks Affect Elections?"
 author: "Janet Hernandez"
 date: "2022-10-24"
 slug: "week7-shocks"
@@ -106,16 +106,7 @@ mydata <- readRDS("inflation_2022.RDS")
 ```
 
 ## Background Literature on Shocks and Elections 
-
-• Natural disaster: Shark attack (Achen and Bartels 2017), tornado
-(Healy and Malhotra 2010) ⇝ decreased support for incumbents
-• Sports (Healy, Mo, Malhotra 2010): college football team losing
-their game ⇝ decreased support for incumbents
-• Lottery (Bagues and Esteve-Volart 2016): Towns winning Spanish
-Christmas lottery ⇝ increased support for incumbents
-Global comparison (Powell & Whitten 1993): Punish only when
-the gov’t is doing worse than other gov’ts
-• Ex: the speed of recovery
+There is varying literature on the effects of shocks on elections. Achen and Bartels (2017) and Healy and Malhotra (2010) found that natural disasters such as shark attacks and tornados decreased support for incumbents. Further research in elections has also found some correlation to  college football team losing their game and a subsequent decreased support for incumbents (Healy, Mo, Malhotra 2010). However, it is important to note that most of these relationships are found to be relatively weak. For this reason, I am skeptical to heavily rely on shocks and scandals to inform my model.
 
 
 ```{r visualization, echo=FALSE}
@@ -231,7 +222,6 @@ Above is a graph that compares the peak weeks of coverage as evidenced in the pl
 
 An interesting observation of this graph in particular is how the dates line up perfectly with an overall drop in approval ratings for both Democrats and Republicans. However, the drop is much more significant for the non-incumbent party (Republicans) rather than President Biden's party. One possible explanation for the drop in both Democratic and Republican support could be that the coverage on inflation critiqued both sides, causing overall disillusion with the state of government and the economy. Interestingly enough, Republicans seem to be more punished than Democrats in this data. This may be explained or investigated further by creating sentiment scores for how the coverage was portraying Biden's response as either positive, negative, or neutral. Furthermore, the last thing to consider is that correlation does not equate to causation so there may be a possibility than other (possibly more important or popular) news coverage that I didn't consider in these weeks impacted Americans' support of the parties. 
 
-
 ## My Existing Model and Predictions
 
 My current model uses several inputs including local level economic data such as state unemployment, inflationary levels that are standard across the states, incumbency status for each district, ad spend by candidate, and expert polling averages. 
@@ -288,7 +278,7 @@ incumbentslist <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
 ```
 
 
-```{r w7 setup, include = FALSE}
+```{r w7 turnout setup, include = FALSE}
 # GROUND GAME LAB SECTION NOTES ##
 dist_pv_df <- read.csv("~/Desktop/incumb_dist_1948-2020 (3).csv")
 # read in cvap
@@ -301,12 +291,12 @@ table(dist_pv_df$year)
 # 2012 - from 2018
 # 2014, 2016, 2018, 2020 - from 2020
 dist_pv_df <- dist_pv_df %>%
-filter(year == 2018)
+filter(year == 2012 | year == 2014 | year == 2018)
 table(dist_pv_df$st_cd_fips)
 
 # merge
 dist_pv_cvap <- dist_pv_df %>%
-inner_join(cvap_district, by = c('st_cd_fips', 'year'))
+inner_join(cvap_district, by = c('st_cd_fips', 'year', 'state'))
 
 # mutate turnout
 dist_pv_cvap <- dist_pv_cvap %>%
@@ -314,7 +304,7 @@ mutate(totalvotes = RepVotes + DemVotes,
 turnout = totalvotes/cvap)
 
 # mutate votes percent for glm
-dist_pv_cvap <- dist_pv_cvap %>%
+turnout_gen <- dist_pv_cvap %>%
 mutate(DemVotesMajorPct = DemVotesMajorPercent/100,
 RepVotesMajorPct = RepVotesMajorPercent/100)
 
@@ -355,40 +345,8 @@ districts_simp <- rmapshaper::ms_simplify(cd114, keep = 0.01)
 ```
 
 ```{r including turn out, include=FALSE}
-#Merge datasets from last week for local model and plot districts to see how it influences.
 
-#Possible way to approach this is to take all the data i have from previous years on voter turnout on midterm years only and then create a table w a prediction for 2022 and append that to my last week model.
-
-# read in cvap
-turnout_gen <- read.csv("~/Downloads/drive-download-20221016T234313Z-001/cvap_district_2012-2020_clean.csv")
-
-# mutate geo id for merging
-
-turnout_gen <- turnout_gen %>%
-rename(st_cd_fips = geoid)
-
-turnout_gen <- incumbentslist %>%
-inner_join(cvap_district, by = c('st_cd_fips', 'year'))
-
-#Include District Incumbent Data
-
-incumbentslist <- incumbentslist %>%
-select(year, state, winner_party, district_id, winner_candidate_inc)
-
-#incumbentslist <- incumbentslist %>%
-#filter(year == 2018)
-
-
-turnout_gen <- turnout_gen %>%
-mutate(totalvotes = RepVotes + DemVotes,
-turnout = totalvotes/cvap)
-
-# Filter out for only midterm years and non-presidential bc I think that might have an influence / skew data to more turnout than we should expect empirically.
-turnout_gen <- turnout_gen %>%
-filter(year == 2012 | year == 2014 | year == 2018)
-
-
-turnout <- glm(turnout ~ year + state.x + president_party + cvap + winner_candidate_inc, data = turnout_gen)
+turnout <- glm(turnout ~ year + state + president_party + cvap + winner_candidate_inc, data = turnout_gen)
 
 summary(turnout)
 
@@ -401,16 +359,21 @@ turnout_gen$prediction22 <- turnoutpred$`predict(turnout, new_data = turnoutpred
 #Added column for 2022 prediction now I can go ahead and map how well my model is prediction expected turnout v. actual turnout
 
 
+
 #add margin column
 options(scipen=999)
+
 turnout_gen <- turnout_gen %>%
 mutate(margin = turnout - prediction22)
 
 turnout_18 <- turnout_gen %>%
 filter(year == 2018)
 
-districts_simp <- districts_simp %>%
-inner_join(turnout_18, by = 'district_id')
+districts_simp1 <- districts_simp %>%
+select(STATENAME, ID, DISTRICT, STARTCONG, ENDCONG, FINALNOTE, district_id, CD, geometry)
+
+#turnout_18 <- districts_simp1 %>% 
+#left_join(turnout_18, by = 'district_id')
 ```
 
 
@@ -429,6 +392,7 @@ inner_join(economy_q4, by = "year")
 
 economy_model_data <-economy_model_data %>%
 inner_join(RDI_q4, by = "year")
+
 #Include District Level Economy Data
 # Clean and update economy state level
 unemployment_local <- unemployment_state_monthly %>%
@@ -444,6 +408,7 @@ filter(year == 2018)
 # RDI and unemployment merged
 unemployment_local <- unemployment_local %>%
 inner_join(RDI_q4, by = c("Year" = "year"))
+
 # Include GDP here too
 economy_q4 <- economy_q4 %>%
 select(year, GDP_growth_qt, GDP_growth_pct)
@@ -452,14 +417,19 @@ unemployment_local <- unemployment_local %>%
 inner_join(economy_q4, by = c("Year" = "year"))
 
 # Merge unemployment local to all state and district levels as equal. Merge by State.
-unemployment_local <- rename(unemployment_local, State = 'State.and.area')
+
+unemployment_local <- unemployment_local %>% 
+  dplyr::rename(State = State.and.area)
 
 
 #Include District Level Polling Data (if possible)
 #Using 2018 polling data to model our predictions
 local_model_data_w7 <- house_vote_share_by_district_2018 %>%
-left_join(unemployment_local, by =  "State")
+inner_join(unemployment_local, by = 'State')
 
+local_model_data_w7 <- as.data.frame(local_model_data_w7)
+
+#local_model_data_w7 <- data_frame()
 
 #Append the D and R Seats and national data to our local model for comparison in 2018.
 
@@ -469,12 +439,12 @@ select(year, R_seats, D_seats, R_majorvote_pct, D_majorvote_pct)
 local_model_data_w7 <- local_model_data_w7 %>%
 inner_join(natl_data_2018, by = c("Year" = "year"))
 
+incumbentslist18 <- incumbentslist %>%
+  filter(year == 2018)
 
+## Add expert ratings
 local_model_data_w7 <- local_model_data_w7 %>%
-inner_join(incumbentslist, by = c("State" = "state","district_id" = "district_id"))
-
-local_model_data_w7 <- local_model_data_w7 %>%
-left_join(ratings_share_2018, by = "CD")
+inner_join(ratings_share_2018, by = "CD")
 
 
 ## Ad spend
@@ -489,28 +459,41 @@ select(State, District, Candidate, Incumbent..Challenger.Open, Receipts)
 
 #Need to add winning candidate name i think
 
+#Only add relavent variables for incumbency
+incumbentslist18 <- incumbentslist18 %>% 
+  select(state, district_id, winner_candidate_inc)
+
+
 local_model_data_w7 <- local_model_data_w7 %>%
-mutate(winner_candidate = case_when( WinnerParty == "R" ~ local_model_data_w7$RepCandidate, WinnerParty == "D" ~ local_model_data_w7$DemCandidate))
+left_join(incumbentslist18, by = c("State" = "state","district_id" = "district_id"))
+
+local_model_data_w7 <- local_model_data_w7 %>%
+mutate(winner_candidate = case_when(WinnerParty == "R" ~ local_model_data_w7$RepCandidate, WinnerParty == "D" ~ local_model_data_w7$DemCandidate))
 
 
 local_model_data_w7 <- local_model_data_w7 %>%
 left_join(spending_bydistrict_2018, by = c("State" = "State", "district_num" ="District","winner_candidate_inc" = "Incumbent..Challenger.Open"))
 
+#Include voting data to merge local model data and cvap information
+
+turnoutformerge <- turnout_gen %>% 
+  select(state, year, district_num, district_id, st_cd_fips, cvap, turnout)
+
+local_model_data_w7 <- local_model_data_w7 %>%
+left_join(turnoutformerge, by = c('State' = 'state', 'district_id' = 'district_id', 'raceYear' = 'year'))
 
 local_model_data_w7$Receipts <- as.numeric(gsub("[\\$,]", "", local_model_data_w7$Receipts))
 
 ```
 
-```{r}
+
+```{r, include=FALSE}
 #Take prediction for 2022 turnout and add to my existing model
 w7_df <- data.frame()
 
-w7_df <-districts_simp %>%
-left_join(local_model_data_w7, by = "CD", "district_id")
-
-# drop na
-w7_cleaned <- w7_df %>%
-filter(!is.na(avg_margin))
+#join districts and data
+w7_df <-districts_simp1 %>%
+left_join(local_model_data_w7, by = "district_id", "CD")
 
 #replace missing polling values with toss up rating
 w7_df$avg <- w7_df$avg %>%
@@ -522,32 +505,34 @@ replace_na(3.6)
 w7_df$Receipts <- w7_df$Receipts %>%
 replace_na(960454)
 
+w7_df$turnout <- w7_df$turnout %>% 
+  replace_na(0.515)
+
+
 ```
 
 ```{r, include=FALSE}
 #Simplify shapefile
 w7_df <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
-w7_cleaned <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
+
 ```
 
+*Below are my confidence intervals for my prediction*
 ```{r w7 prediction, echo=FALSE}
-w7_local_model <- glm(DemVotesMajorPercent.x ~ avg + Unemployed_prct + winner_candidate_inc.x + Receipts + turnout, data = w7_df)
+w7_local_model <- glm(DemVotesMajorPercent ~ avg + Unemployed_prct + winner_candidate_inc + Receipts + turnout, data = w7_df)
 
 summ(w7_local_model)
 
 # add in Dem Vote prediction to w6_df and then filter for 2018, then append column to districts simp to plot
 w7_df$DemVotePred22 <- predict(w7_local_model)
 
-w7_simple <- w7_df %>%
-select(State, Year, Month, cd, R_majorvote_pct, D_majorvote_pct, turnout, prediction22, DemVotesMajorPercent, DemVotePred22) %>%
-filter(Year == 2018)
 
 confint.default(w7_local_model)
 ```
 ## Final Prediction for Week 7 
 
 
-My final prediction for Week 7 is that
+My final prediction for Week 7 is below
 
 ```{r plot for w7 prediction, echo=FALSE}
 
@@ -569,10 +554,11 @@ plot.title = element_text(margin = margin(0,0,10,0), hjust = 0.5)) +
 labs(fill = "DemMajorVotePct Prediction", title = "Week 7 Model Prediction\n DemMajorVotePct per District")
 
 ggplotly(w7_plot)
+
 ```
 
-```{r, prediction}
-districts22 <- w7_df %>% group_by(CD) %>% filter(row_number() == 1)
+```{r, prediction, include=FALSE}
+districts22 <- w7_df %>% group_by(district_id) %>% filter(row_number() == 1)
 
 summary(districts22$DemVotePred22 >= 50)
 
