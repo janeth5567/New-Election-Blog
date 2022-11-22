@@ -506,7 +506,7 @@ w7_df$Receipts <- w7_df$Receipts %>%
 replace_na(960454)
 
 w7_df$turnout <- w7_df$turnout %>% 
-  replace_na(0.515)
+  replace_na(0.47)
 
 
 ```
@@ -515,6 +515,7 @@ w7_df$turnout <- w7_df$turnout %>%
 #Simplify shapefile
 w7_df <- rmapshaper::ms_simplify(w7_df, keep = 0.01)
 
+final <- w7_df
 ```
 
 *Below are my confidence intervals for my prediction*
@@ -532,7 +533,6 @@ confint.default(w7_local_model)
 ## Final Prediction for Week 7 
 
 
-My final prediction for Week 7 is below
 
 ```{r plot for w7 prediction, echo=FALSE}
 

@@ -7,7 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (Janet Hernandez)</managingEditor>
     <webMaster>youremail@domain.com (Janet Hernandez)</webMaster>
-    <lastBuildDate>Mon, 07 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 20 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://username.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post Election Reflection</title>
+      <link>https://username.github.io/post/2022-11-20-post-election-reflection/</link>
+      <pubDate>Sun, 20 Nov 2022 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (Janet Hernandez)</author>
+      <guid>https://username.github.io/post/2022-11-20-post-election-reflection/</guid>
+      <description>Introduction As of Monday, November 21st, 2022, the current makeup of the 2022 Congress is that 430/435 seats have been called and currently have confirmed 218 Republican seats, 213 Democratic seats. This means the Republicans did take control of the House, however, speculations of a “Red Wave” did not hold up. The Democrats barely held to the Senate, with 50 seats right now, and Georgia heads to runoff. If Warnock wins as many predict, the final makeup will be 51 Democrats and 49 Republicans in the Senate.</description>
+    </item>
+    
     <item>
       <title>Final Predictive Model</title>
       <link>https://username.github.io/post/2022-11-07-final-predictive-model/</link>
