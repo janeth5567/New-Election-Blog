@@ -91,12 +91,12 @@ unemployment_state_monthly <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/
 #DATA FROM FEC.gov
 spending_bydistrict_2018 <- read.csv("~/Desktop/Gov1347 Data/Gov1347 Projects/ElectionBlog/2018_spending_by_district.csv")
 
-house_party_vote_share_by_district <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")%>%
+house_party_vote_share_by_district <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv")%>%
 filter(raceYear == 2018) %>%
 select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
 
 #Load data just for year 2018
-house_vote_share_by_district_2018 <- read_csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
+house_vote_share_by_district_2018 <- read.csv("~/Desktop/Syllabi for Fall 22/election analytics/Gov1347 Data/house party vote share by district 1948-2020.csv") %>%
 filter(raceYear == 2018) %>%
 select(State, raceYear, Area, RepCandidate, DemCandidate, RepVotesMajorPercent, DemVotesMajorPercent, st_fips, state_abb, CD, district_num, district_id, WinnerParty)
 
