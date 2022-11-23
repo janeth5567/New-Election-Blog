@@ -12,13 +12,13 @@ image: ''
 # Introduction #
 As of Monday, November 21st, 2022, the current makeup of the 2022 Congress is that 430/435 seats have been called and currently have confirmed 218 Republican seats, 213 Democratic seats. This means the Republicans did take control of the House, however, speculations of a "Red Wave" did not hold up. The Democrats barely held to the Senate, with 50 seats right now, and Georgia heads to runoff. If Warnock wins as many predict, the final makeup will be 51 Democrats and 49 Republicans in the Senate. 
 
-#Recap of Model and Prediction #
+# Recap of Model and Prediction #
 
 My model attempted to use aggregate data from 2018 to predict an outcome for 2022. I will go into my challenges with this later on. The general makeup of my model was that I used GLM and LM with the inputs of national economic data (including national 2018 GDP and RDI), local economic data (unemployment), weighted polling (weighted from 2018 polling data on closeness to election = more weight),  average expert prediction (1 for Strong Dem to 7 for Strong Rep), turnout, as well as the incumbency status of the winning candidate to predict the 2022 outcomes. 
 
 As you can see, my model had many inputs and while running the regression, many of these variables didn't have much of an impact on my results. 
 
-#Graphic Performance of My Model #
+# Graphic Performance of My Model #
 ```{r old model setup, include=FALSE}
 library(readr)
 library(stringr)
@@ -321,7 +321,6 @@ summ(w7_local_model)
 # add in Dem Vote prediction to w6_df and then filter for 2018, then append column to districts simp to plot
 w7_df$DemVotePred22 <- predict(w7_local_model)
 
-confint.default(w7_local_model)
 ```
 
 
@@ -440,13 +439,10 @@ final_22$margin22 <- final_22$DemVoteActual - final_22$DemVotePred22
 
 *Below were my confidence intervals for my prediction*
 
-```{r, add in the 2022 data into my model}
+```{r plot for comparison, echo= FALSE}
 
-final_22 <-rmapshaper::ms_simplify(final_22, keep = 0.01)
+confint.default(w7_local_model)
 
-```
-
-```{r plot for comparison}
 margin_plot <- ggplot() +
 geom_sf(data= final_22, aes(fill= margin22), color = "grey60", size = 0.05) +
 scale_fill_gradient2(low = "red",
@@ -468,12 +464,25 @@ ggplotly(margin_plot)
 ```
 
 
-As you can see above, I have plotted the margin (Actual - My model's prediction) of the Democratic vote percent in 2022. My model greatly overestimated Democratic performance even in Blue states. There are some interesting things to note, one is how it underpredicted performance in states like South Carolina, Montana, and parts of Florida. I think this is an interesting finding when considered in conjuction with certain speculations political scientists and party leadership has had about an increase in Dem mobilization in certain Red stronghold states. 
+As you can see above, I have plotted the margin (Actual - My model's prediction) of the Democratic vote percent in 2022. My model greatly overestimated Democratic performance even in Blue states. There are some interesting things to note, one is how it under predicted performance in states like South Carolina, Montana, and parts of Florida. I think this is an interesting finding when considered in conjuction with certain speculations political scientists and party leadership has had about an increase in Dem mobilization in certain Red stronghold states. 
 
 
-#Where I Went Wrong #
+# Where I Went Wrong #
 
 I think the biggest mistake I made was not doing a pooled model. I think most of the reason I had such strong model predictions for Democrats is that I only used data from the year 2018. 
 
-#If I Were to Do It Again ...#
+The year 2018 was an especially strong year for democrats, and it was also a year where Republicans had control of the presidency and the previous House, therefore, it made sense that 2018 would be a strong year for Democrats. Another thing that played into that was that my model heavily relied on the expert predictions for that year. By including already optimistic expert predictions, my model heavily skewed towards Dems. 
+
+Another factor I forgot to consider while estimating turnout is that I used weights for the midterm years but 2018 seemed to be an anamoly with how strongly people turned out to vote. 
+
+Other things that contributed to my model being inaccurate was that 2022 was in fact a unique year. Like we heard from experts such as David Shor, Republicans messed up. Though my model over predicted Dems, what everyone thought was going to be a "red wave" turned out to be a small crash on the shore. David Shor had explained that voters love to do a balancing act in politics, they vote out the incumbent party to re-balance power every election possible. However, with Republicans showing that they could use force and power beyond legislation through Dobs and other acts, voters had less desire to completely oust Democrats. This resulted in a huge under performance from Republicans and a surprisingly positive result for Democratic Party leaders. 
+
+This election showed young people being mobilized, almost to 2018 levels. Without the younger vote, it is no doubt that the Democrats would not have been able to keep an edge on the Republicans and hold the Senate while over performing in the House. 
+
+Another consideration I found interesting this election cycle is how demographic indicators of party are loosening among Latino voters. Most surprisingly this election, Governor Ron DeSantis was able to win Miami-Dade County. Miami-Dade has long been a stronghold for Democrats with its extremely high POC and foreign born / naturalized population. This is the first time since Jeb Bush in 2002 that a GOP candidate for Governor was able to win Miami-Dade. This is a great sign for DeSantis as a candidate, but also is part of a larger trend with Latino voters beocming more Republican in recent years. I would be interested to see how models were affected in people who chose to include demographic data into their models. 
+
+
+# If I Were to Do It Again ... #
+
+There were quite a few things I would do again if I could do this over again. I think it took me a long time to really get a hold of what it meant to cross validate and check my model for error and over fitting. I would definetely also next time around consider doing a pooled model to better be able to predict historical trends. What this class and my model has shown me is that relying on one election for a prediction is not smart since US politics is straying further away from historical norms. There were lots of things I only became comfortable with at the end, and I truly learned a lot through going through exercises with cleaning, manipulating, and modelling data sets. If I had the skills I have now at the beginning, I would definitely have had a much more solid plan and understanding of what I could do with the data I had at my disposal. 
 
